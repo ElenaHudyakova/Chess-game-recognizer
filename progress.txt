@@ -1,2 +1,1 @@
-﻿Создала репозиторий.
-Сделала еще один коммит.
+﻿Began developing PGNHandler: now it can parse tag pairs from PGN-file for several parties.
