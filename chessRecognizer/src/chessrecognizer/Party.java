@@ -4,8 +4,8 @@
  */
 package chessrecognizer;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,12 +28,22 @@ public class Party {
     private String black;
     private Date date;
     private int result;
-    private List<Move> moves;
+    private ArrayList<Move> moves = new ArrayList<Move>();
 
+    public ArrayList<Move> getMoves() {
+        return moves;
+    }
+    
+    public Move getMove(int sequenceNumber) {
+        return moves.get(sequenceNumber-1);
+    }    
+
+    public void addMove(Move move){
+        moves.add(move);
+    }
     
     public Party() {
         this.id = -1;
-        this.moves = null;
     }
 
     public Party(String event, String site, String round, String white, String black, Date date, int result) {

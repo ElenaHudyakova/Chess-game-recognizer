@@ -12,41 +12,32 @@ public class Move {
     private int id;
     private int partyID;
     private int moveNumber;
-    private String move;
+    private String moveContent;
     private int player;
     
     public final static int BLACK_PLAYER = 1;
     public final static int WHITE_PLAYER = 0;
 
-    public Move(int id, int partyID, int moveNumber, String move, int player) {
-        this.id = id;
+    public Move() {
+        id = -1;
+        partyID = -1;
+    }
+
+    public Move(int partyID, int moveNumber, String moveContent, int player) {
         this.partyID = partyID;
         this.moveNumber = moveNumber;
-        this.move = move;
+        this.moveContent = moveContent;
         this.player = player;
     }
-
-    public Move(int partyID, int moveNumber, String move, int player) {
-        this.partyID = partyID;
-        this.moveNumber = moveNumber;
-        this.move = move;
-        this.player = player;
-    }
-
-    public static int getBLACK_PLAYER() {
-        return BLACK_PLAYER;
-    }
-
-    public static int getWHITE_PLAYER() {
-        return WHITE_PLAYER;
-    }
+    
+    
 
     public int getId() {
         return id;
     }
 
-    public String getMove() {
-        return move;
+    public String getMoveContent() {
+        return moveContent;
     }
 
     public int getMoveNumber() {
@@ -65,8 +56,8 @@ public class Move {
         this.id = id;
     }
 
-    public void setMove(String move) {
-        this.move = move;
+    public void setMoveContent(String moveContent) {
+        this.moveContent = moveContent;
     }
 
     public void setMoveNumber(int moveNumber) {
@@ -83,7 +74,7 @@ public class Move {
 
     @Override
     public String toString() {
-        return "Move{" + "id=" + id + ", partyID=" + partyID + ", moveNumber=" + moveNumber + ", move=" + move + ", player=" + player + '}';
+        return "Move{" + "id=" + id + ", partyID=" + partyID + ", moveNumber=" + moveNumber + ", moveContent=" + moveContent + ", player=" + player + '}';
     }
   
 }

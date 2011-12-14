@@ -41,6 +41,7 @@ public class PGNHandler {
     
     private static void parseLine(String line, Party party){
         parseTagPair(line, party);
+        parseMoves(line, party);
     }
     
     public static List<Party> parseParties(String file_name){
@@ -73,6 +74,44 @@ public class PGNHandler {
             return true;
         else
             return false;
+    }
+    
+    private static int getFirstMoveInLineNumber(String line){
+        Pattern moveNumberPattern = Pattern.compile("(\\d+)\\.");
+        //System.out.println(line);
+        Matcher matcher = moveNumberPattern.matcher(line);
+        if (matcher.find())
+            return Integer.parseInt(matcher.group(1));
+        else
+           throw new RuntimeException("Invalid move");
+    }
+
+    private static void parseMoves(String line, Party party) {
+        String [] moves = line.split("\\d+\\. ");
+        int currentMoveInLineNumber;
+        try{
+            currentMoveInLineNumber = getFirstMoveInLineNumber(line);
+        } catch (RuntimeException e){
+            return;
+        }
+        
+        Pattern movePattern = Pattern.compile("(\\w+) (\\w+)");
+        
+        for (String oneSideMove:moves){
+            Matcher matcher = movePattern.matcher(oneSideMove);
+            if (matcher.find()){
+                party.addMove(new Move(party.getId(), 
+                        currentMoveInLineNumber,
+                        matcher.group(1),
+                        Move.WHITE_PLAYER));
+                party.addMove(new Move(party.getId(), 
+                        currentMoveInLineNumber,
+                        matcher.group(2),
+                        Move.BLACK_PLAYER));   
+                currentMoveInLineNumber++;
+            }            
+        }         
+  
     }
     
 }
