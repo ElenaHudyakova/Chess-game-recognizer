@@ -47,8 +47,7 @@ public class PGNHandlerTest {
     }
     
     
-    public void createOnePartyPGN() throws FileNotFoundException{
-        String file_name = "simple.pgn";
+    public static void createOnePartyPGN(String file_name) throws FileNotFoundException{
         try {
             PrintWriter writer = new PrintWriter(
                  new OutputStreamWriter(
@@ -60,7 +59,7 @@ public class PGNHandlerTest {
                     "[White \"Fischer, Robert J.\"]\n" +
                     "[Black \"Spassky, Boris V.\"]\n" +
                     "[Result \"1/2-1/2\"]\n\n" +
-                    "1. f4 b6 2. Nf3 Bb7\n\n");
+                    "1. f4 b6\n\n");
             
             writer.close();
         } catch (UnsupportedEncodingException ex) {
@@ -69,7 +68,7 @@ public class PGNHandlerTest {
         
     }
     
-    public void createTwoPartiesPGN(String file_name) throws FileNotFoundException{
+    public static void createTwoPartiesPGN(String file_name) throws FileNotFoundException{
         try {
             PrintWriter writer = new PrintWriter(
                  new OutputStreamWriter(
@@ -104,9 +103,9 @@ public class PGNHandlerTest {
     @Test
     public void testParseTagPairsForOneParty() throws FileNotFoundException {
         System.out.println("testParseTagPairsForOneParty");
-        createOnePartyPGN();
-        String file_name = "simple.pgn";        
         
+        String file_name = "simple.pgn";        
+        createOnePartyPGN(file_name);        
         List<Party> resultParties = PGNHandler.parseParties(file_name);
         
         assertNotNull(resultParties);
@@ -144,41 +143,25 @@ public class PGNHandlerTest {
     @Test
     public void testParseOneMoveForOneParty() throws FileNotFoundException {
         System.out.println("testParseOneMoveForOneParty");
-        createOnePartyPGN();
-        String file_name = "simple.pgn";        
         
+        String file_name = "simple.pgn";        
+        createOnePartyPGN(file_name);
         List<Party> resultParties = PGNHandler.parseParties(file_name);
         
         assertNotNull(resultParties);
         assertNotNull(resultParties.get(0).getMoves());   
         assertEquals(1, resultParties.get(0).getMove(1).getMoveNumber());
-        assertEquals(Move.WHITE_PLAYER, resultParties.get(0).getMove(1).getPlayer());
+        assertEquals(Figure.ChessColor.white, resultParties.get(0).getMove(1).getPlayer());
         assertEquals("f4", resultParties.get(0).getMove(1).getMoveContent());
         assertEquals(1, resultParties.get(0).getMove(2).getMoveNumber());
-        assertEquals(Move.BLACK_PLAYER, resultParties.get(0).getMove(2).getPlayer());
+        assertEquals(Figure.ChessColor.black, resultParties.get(0).getMove(2).getPlayer());
         assertEquals("b6", resultParties.get(0).getMove(2).getMoveContent());
         assertEquals(-1, resultParties.get(0).getMove(2).getPartyID());
     }    
     
     @Test
-    public void testParseTwoMovesForOneParty() throws FileNotFoundException {
-        System.out.println("testParseTwoMovesForOneParty");
-        createOnePartyPGN();
-        String file_name = "simple.pgn";        
-        
-        List<Party> resultParties = PGNHandler.parseParties(file_name);
-        
-        assertNotNull(resultParties);
-        assertNotNull(resultParties.get(0).getMoves());   
-        assertEquals(4, resultParties.get(0).getMoves().size());
-        assertEquals(1, resultParties.get(0).getMove(1).getMoveNumber());
-        assertEquals("Nf3", resultParties.get(0).getMove(3).getMoveContent());
-        assertEquals("Bb7", resultParties.get(0).getMove(4).getMoveContent());
-    }
-    
-    @Test
-    public void testParseManyMoves() throws FileNotFoundException {
-        System.out.println("testParseManyMoves");
+    public void testParseManyMovesOneParty() throws FileNotFoundException {
+        System.out.println("testParseManyMovesOneParty");
         String file_name = "manyMoves.pgn";    
         createManyMovesPGN(file_name);    
         
@@ -226,7 +209,7 @@ public class PGNHandlerTest {
             writer.close();
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(PGNHandlerTest.class.getName()).log(Level.SEVERE, null, ex);
-        }        
+        }       
         
         
     }

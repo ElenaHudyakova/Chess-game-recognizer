@@ -6,6 +6,8 @@ package chessrecognizer;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,16 +30,26 @@ public class Party {
     private String black;
     private Date date;
     private int result;
-    private ArrayList<Move> moves = new ArrayList<Move>();
+    private ArrayList<Move> moves = new ArrayList<Move>();//нумерация с 1
+    private ArrayList<View> views = new ArrayList<View>();//нумерация с 0
 
     public ArrayList<Move> getMoves() {
         return moves;
     }
     
-    public Move getMove(int sequenceNumber) {
-        return moves.get(sequenceNumber-1);
+    public Move getMove(int moveSequenceNumber) {
+        return moves.get(moveSequenceNumber-1);
     }    
 
+    public ArrayList<View> getViews() {
+        return views;
+    }
+    
+    public View getView(int viewSequenceNumber) {
+        return views.get(viewSequenceNumber);
+    }    
+
+    
     public void addMove(Move move){
         moves.add(move);
     }
@@ -161,6 +173,23 @@ public class Party {
                              Integer.parseInt(matcher.group(2))));
         else
             throw new RuntimeException("Invalid date");
+    }
+    
+    public void generateViews(){
+        View initialView = new View();
+        initialView.setInitialView();
+        views.add(initialView);
+        
+        for (Move move:moves){
+            View view = new View();
+            try {
+                view.setMoveView(move, views.get(views.size()-1));
+            } catch (CloneNotSupportedException ex) {
+                Logger.getLogger(Party.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            views.add(view);
+        }
+        
     }
     
 }
