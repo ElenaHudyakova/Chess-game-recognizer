@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿﻿Began developing PGNHandler: now it can parse tag pairs from PGN-file for several parties.
 Now it can parse tag pairs and movetext for several parties from one PNG-file.
 
@@ -10,3 +11,7 @@ Now i need to do refactoring as my code is terrible. Then i will implement gener
 
 Then I will work on my DBHandler.
 Then I will work on my GUI.
+=======
+﻿Began developing PGNHandler: now it can parse tag pairs from PGN-file for several parties.
+Now it can parse tag pairs and movetext for several parties from one PNG-file.
+>>>>>>> 133b8beeb57a77352030cfbe300ad4fb009c06c9
