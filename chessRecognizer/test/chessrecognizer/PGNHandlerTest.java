@@ -116,7 +116,7 @@ public class PGNHandlerTest {
         assertEquals("29", resultParties.get(0).getRound());
         assertEquals("Fischer, Robert J.", resultParties.get(0).getWhite());
         assertEquals("Spassky, Boris V.", resultParties.get(0).getBlack());
-        assertEquals(Party.DRAW, resultParties.get(0).getResult());
+        assertEquals(Party.PartyResult.DRAW, resultParties.get(0).getResult());
 
     }
 
@@ -136,7 +136,7 @@ public class PGNHandlerTest {
         assertEquals("29.1", resultParties.get(1).getRound());
         assertEquals("Fischer, Robert J.", resultParties.get(1).getWhite());
         assertEquals("Spassky, Boris V.", resultParties.get(1).getBlack());
-        assertEquals(Party.BLACK_WIN, resultParties.get(1).getResult());
+        assertEquals(Party.PartyResult.BLACK_WIN, resultParties.get(1).getResult());
 
     }   
     
@@ -151,10 +151,10 @@ public class PGNHandlerTest {
         assertNotNull(resultParties);
         assertNotNull(resultParties.get(0).getMoves());   
         assertEquals(1, resultParties.get(0).getMove(1).getMoveNumber());
-        assertEquals(Figure.ChessColor.white, resultParties.get(0).getMove(1).getPlayer());
+        assertEquals(Piece.ChessColor.white, resultParties.get(0).getMove(1).getPlayer());
         assertEquals("f4", resultParties.get(0).getMove(1).getMoveContent());
         assertEquals(1, resultParties.get(0).getMove(2).getMoveNumber());
-        assertEquals(Figure.ChessColor.black, resultParties.get(0).getMove(2).getPlayer());
+        assertEquals(Piece.ChessColor.black, resultParties.get(0).getMove(2).getPlayer());
         assertEquals("b6", resultParties.get(0).getMove(2).getMoveContent());
         assertEquals(-1, resultParties.get(0).getMove(2).getPartyID());
     }    

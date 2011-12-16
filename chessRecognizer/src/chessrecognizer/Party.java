@@ -15,12 +15,8 @@ import java.util.regex.Pattern;
  *
  * @author Lenkas
  */
-public class Party {
-    
-    public final static int WHITE_WIN = 1;
-    public final static int BLACK_WIN = -1;
-    public final static int DRAW = 0;
-    public final static int NO_RESULT = 2;
+public class Party {   
+    public enum PartyResult{WHITE_WIN, BLACK_WIN, DRAW, NO_RESULT};
 
     private int id;
     private String event;
@@ -29,7 +25,7 @@ public class Party {
     private String white;
     private String black;
     private Date date;
-    private int result;
+    private PartyResult result;
     private ArrayList<Move> moves = new ArrayList<Move>();//нумерация с 1
     private ArrayList<View> views = new ArrayList<View>();//нумерация с 0
 
@@ -58,7 +54,7 @@ public class Party {
         this.id = -1;
     }
 
-    public Party(String event, String site, String round, String white, String black, Date date, int result) {
+    public Party(String event, String site, String round, String white, String black, Date date, PartyResult result) {
         this.event = event;
         this.site = site;
         this.round = round;
@@ -85,7 +81,7 @@ public class Party {
         return id;
     }
 
-    public int getResult() {
+    public PartyResult getResult() {
         return result;
     }
 
@@ -117,29 +113,28 @@ public class Party {
         this.id = id;
     }
 
-    public void setResult(int result) {
-        if ((result==WHITE_WIN)||(result==BLACK_WIN)||(result==DRAW))
+    public void setResult(PartyResult result) {
+        if ((result==PartyResult.WHITE_WIN)||(result==PartyResult.BLACK_WIN)||(result==PartyResult.DRAW))
             this.result = result;
         else    
             throw new RuntimeException("Invalid result");
     }
 
     public void setResult(String partyResult) throws RuntimeException{
-        if (partyResult.toLowerCase().equals("1/2-1/2")){                    
-            setResult(Party.DRAW);
+        if (partyResult.equals("1/2-1/2")){                    
+            setResult(PartyResult.DRAW);
             return;
         }
-        if (partyResult.toLowerCase().equals("1-0")){
-            setResult(Party.WHITE_WIN);
+        if (partyResult.equals("1-0")){
+            setResult(PartyResult.WHITE_WIN);
             return;
         }                      
-        if (partyResult.toLowerCase().equals("0-1")){
-            setResult(Party.BLACK_WIN);
+        if (partyResult.equals("0-1")){
+            setResult(PartyResult.BLACK_WIN);
             return;
-        }                 
-            
-        if (partyResult.toLowerCase().equals("*")){
-            setResult(Party.NO_RESULT); 
+        }                          
+        if (partyResult.equals("*")){
+            setResult(PartyResult.NO_RESULT); 
             return;
         }                
          
@@ -182,11 +177,7 @@ public class Party {
         
         for (Move move:moves){
             View view = new View();
-            try {
-                view.setMoveView(move, views.get(views.size()-1));
-            } catch (CloneNotSupportedException ex) {
-                Logger.getLogger(Party.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            view.setMoveView(move, views.get(views.size()-1));
             views.add(view);
         }
         

@@ -103,11 +103,11 @@ public class PGNHandler {
                 party.addMove(new Move(party.getId(), 
                         currentMoveInLineNumber,
                         matcher.group(1),
-                        Figure.ChessColor.white));
+                        Piece.ChessColor.white));
                 party.addMove(new Move(party.getId(), 
                         currentMoveInLineNumber,
                         matcher.group(2),
-                        Figure.ChessColor.black));   
+                        Piece.ChessColor.black));   
                 currentMoveInLineNumber++;
             }            
         }         

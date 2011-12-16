@@ -4,7 +4,7 @@
  */
 package chessrecognizer;
 
-import chessrecognizer.Figure.Type;
+import chessrecognizer.Piece.Type;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,14 +17,14 @@ public class Move {
     private int partyID;
     private int moveNumber;
     private String moveContent;
-    private Figure.ChessColor player;
+    private Piece.ChessColor player;
 
     public Move() {
         id = -1;
         partyID = -1;
     }
 
-    public Move(int partyID, int moveNumber, String moveContent, Figure.ChessColor player) {
+    public Move(int partyID, int moveNumber, String moveContent, Piece.ChessColor player) {
         this.partyID = partyID;
         this.moveNumber = moveNumber;
         this.moveContent = moveContent;
@@ -49,7 +49,7 @@ public class Move {
         return partyID;
     }
 
-    public Figure.ChessColor getPlayer() {
+    public Piece.ChessColor getPlayer() {
         return player;
     }
 
@@ -69,7 +69,7 @@ public class Move {
         this.partyID = partyID;
     }
 
-    public void setPlayer(Figure.ChessColor player) {
+    public void setPlayer(Piece.ChessColor player) {
         this.player = player;
     }
 
@@ -79,7 +79,7 @@ public class Move {
     }
 
 
-    public Type parseFigureTypeToMove() {
+    public Type parsePieceTypeToMove() {
         Pattern movePattern = Pattern.compile("([KRQNB])");       
         Matcher matcher = movePattern.matcher(this.moveContent);
         if (matcher.find()){

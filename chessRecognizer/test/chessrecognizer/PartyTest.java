@@ -67,7 +67,7 @@ public class PartyTest {
         Party party = PGNHandler.parseParties(fileName).get(0);
         party.generateViews();
         
-        Figure blackPawn = new Figure(2, 7, Figure.Type.pawn, Figure.ChessColor.black, true);
+        Piece blackPawn = new Piece(2, 7, Piece.Type.pawn, Piece.ChessColor.black, true);
         
         assertNotNull(party.getViews());
         assertEquals(3, party.getViews().size());

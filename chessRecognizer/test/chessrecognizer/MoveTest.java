@@ -4,7 +4,7 @@
  */
 package chessrecognizer;
 
-import chessrecognizer.Figure.Type;
+import chessrecognizer.Piece.Type;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -39,20 +39,20 @@ public class MoveTest {
 
 
     @Test
-    public void testParseFigureTypeToMovePawn() {
-        System.out.println("testParseFigureTypeToMovePawn");
-        Move firstMove = new Move(-1, 1, "f4", Figure.ChessColor.white);
+    public void testParsePieceTypeToMovePawn() {
+        System.out.println("testParsePieceTypeToMovePawn");
+        Move firstMove = new Move(-1, 1, "f4", Piece.ChessColor.white);
         Type expResult = Type.pawn;
-        Type result = firstMove.parseFigureTypeToMove();
+        Type result = firstMove.parsePieceTypeToMove();
         assertEquals(expResult, result);
     }
     
     @Test
-    public void testParseFigureTypeToMoveKnight() {
-        System.out.println("testParseFigureTypeToMoveKnight");
-        Move firstMove = new Move(-1, 1, "Nf3", Figure.ChessColor.white);
+    public void testParsePieceTypeToMoveKnight() {
+        System.out.println("testParsePieceTypeToMoveKnight");
+        Move firstMove = new Move(-1, 1, "Nf3", Piece.ChessColor.white);
         Type expResult = Type.knight;
-        Type result = firstMove.parseFigureTypeToMove();
+        Type result = firstMove.parsePieceTypeToMove();
         assertEquals(expResult, result);
     }   
 
@@ -60,7 +60,7 @@ public class MoveTest {
     @Test
     public void testParseRankMoveTo() {
         System.out.println("parseRankMoveTo");
-        Move firstMove = new Move(-1, 1, "Nf3", Figure.ChessColor.white);
+        Move firstMove = new Move(-1, 1, "Nf3", Piece.ChessColor.white);
         int expResult = 3;
         int result = firstMove.parseRankMoveTo();
         assertEquals(expResult, result);
@@ -70,7 +70,7 @@ public class MoveTest {
     @Test
     public void testParseFileMoveToKnight() {
         System.out.println("testParseFileMoveToKnight");
-        Move firstMove = new Move(-1, 1, "Nf3", Figure.ChessColor.white);
+        Move firstMove = new Move(-1, 1, "Nf3", Piece.ChessColor.white);
         int expResult = 6;
         int result = firstMove.parseFileMoveTo();
         assertEquals(expResult, result);
@@ -79,7 +79,7 @@ public class MoveTest {
     @Test
     public void testParseFileMoveToPawn() {
         System.out.println("testParseFileMoveToPawn");
-        Move firstMove = new Move(-1, 1, "f4", Figure.ChessColor.white);
+        Move firstMove = new Move(-1, 1, "f4", Piece.ChessColor.white);
         int expResult = 6;
         int result = firstMove.parseFileMoveTo();
         assertEquals(expResult, result);

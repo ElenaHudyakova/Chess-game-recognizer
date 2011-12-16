@@ -4,8 +4,8 @@
  */
 package chessrecognizer;
 
-import chessrecognizer.Figure.ChessColor;
-import chessrecognizer.Figure.Type;
+import chessrecognizer.Piece.ChessColor;
+import chessrecognizer.Piece.Type;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -42,7 +42,7 @@ public class FigureTest {
     @Test
     public void testFigureToString() {
         System.out.println("testFigureToString");
-        Figure instance = new Figure(1, 2, Type.pawn, ChessColor.white);
+        Piece instance = new Piece(1, 2, Type.pawn, ChessColor.white);
         String expResult = "Figure{pawn, 12, white, isToMove=false}";
         String result = instance.toString();
         assertEquals(expResult, result);
