@@ -4,6 +4,13 @@
  */
 package chessrecognizer;
 
+import chessrecognizer.pieces.Piece;
+import chessrecognizer.pieces.KnightPiece;
+import chessrecognizer.pieces.KingPiece;
+import chessrecognizer.pieces.QueenPiece;
+import chessrecognizer.pieces.RookPiece;
+import chessrecognizer.pieces.BishopPiece;
+import chessrecognizer.pieces.PawnPiece;
 import java.util.ArrayList;
 
 /**
@@ -12,67 +19,72 @@ import java.util.ArrayList;
  */
 public class View implements Cloneable {
     
-    public ArrayList<Piece> figures = new ArrayList<Piece>();
+    public ArrayList<Piece> pieces = new ArrayList<Piece>();
 
-    private void addInitialOneSideFigures(Piece.ChessColor color){
+    private void addInitialOneSidePieces(Piece.ChessPlayer color){
         int rank1 = 1, rank2 = 2; //white
         
-        if (color==Piece.ChessColor.black){
+        if (color==Piece.ChessPlayer.black){
             rank1 = 8;
             rank2 = 7;
         }
         
         for (int file=1; file<=8; file++)
-            figures.add(new Piece(file,rank2,Piece.Type.pawn, color)); 
+            pieces.add(new PawnPiece(file,rank2,color)); 
         
-        figures.add(new Piece(1, rank1, Piece.Type.rook, color));
-        figures.add(new Piece(2, rank1, Piece.Type.knight, color));
-        figures.add(new Piece(3, rank1, Piece.Type.bishop, color));
-        figures.add(new Piece(4, rank1, Piece.Type.queen, color));
-        figures.add(new Piece(5, rank1, Piece.Type.king, color));
-        figures.add(new Piece(6, rank1, Piece.Type.bishop, color));
-        figures.add(new Piece(7, rank1, Piece.Type.knight, color));
-        figures.add(new Piece(8, rank1, Piece.Type.rook, color));
+        pieces.add(new RookPiece(1, rank1, color));
+        pieces.add(new KnightPiece(2, rank1, color));
+        pieces.add(new BishopPiece(3, rank1, color));
+        pieces.add(new QueenPiece(4, rank1, color));
+        pieces.add(new KingPiece(5, rank1, color));
+        pieces.add(new BishopPiece(6, rank1, color));
+        pieces.add(new KnightPiece(7, rank1, color));
+        pieces.add(new RookPiece(8, rank1, color));
+        
     }
     
     public void setInitialView() {
-        addInitialOneSideFigures(Piece.ChessColor.white);
-        addInitialOneSideFigures(Piece.ChessColor.black);
+        addInitialOneSidePieces(Piece.ChessPlayer.white);
+        addInitialOneSidePieces(Piece.ChessPlayer.black);
     }
 
     public void setMoveView(Move move, View previousView) {
-        figures = new ArrayList<Piece>();         
+        pieces = new ArrayList<Piece>();         
         
-        Piece movedFigure = null;
+        Piece movedPiece = null;
         
-        for (Piece figure:previousView.figures){  
-            if (figure.satisfyTo(move, previousView)){
-                movedFigure = (Piece)figure.clone();
-                figure.setIsToMove(true);
+        for (Piece piece:previousView.pieces){  
+            if (piece.satisfyTo(move, previousView)){
+                movedPiece = (Piece)piece.clone();
+                piece.isToMove = true;
             } else
-                figures.add((Piece)figure.clone());   
+                pieces.add((Piece)piece.clone());   
         }
 
-        addMovedFigure(movedFigure, move);                      
+        addMovedPiece(movedPiece, move);                      
     }
 
-    public Piece getFigure(int file, int rank){
-        for (Piece figure:figures){
+    public Piece getPiece(int file, int rank){
+        for (Piece figure:pieces){
             if ((figure.getFile()==file)&&(figure.getRank()==rank))
                 return figure;
         }
         return null;
     }
+    
+    public ArrayList<Piece> getPieces(){
+        return pieces;
+    }    
 
-    private void addMovedFigure(Piece movedFigure, Move move) {
+    private void addMovedPiece(Piece movedPiece, Move move) {
         int fileMoveTo = move.parseFileMoveTo();
         int rankMoveTo = move.parseRankMoveTo();
         
-        if (movedFigure == null)
+        if (movedPiece == null)
             throw new RuntimeException("Invalid move");
         else{
-            movedFigure.moveTo(fileMoveTo, rankMoveTo, this);
-            figures.add(movedFigure);
+            movedPiece.moveTo(fileMoveTo, rankMoveTo, this);
+            pieces.add(movedPiece);
         }        
     }
 }

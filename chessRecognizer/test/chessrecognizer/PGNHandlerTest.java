@@ -4,6 +4,7 @@
  */
 package chessrecognizer;
 
+import chessrecognizer.pieces.Piece;
 import java.util.Date;
 import java.util.logging.Logger;
 import java.util.logging.Level;
@@ -151,10 +152,10 @@ public class PGNHandlerTest {
         assertNotNull(resultParties);
         assertNotNull(resultParties.get(0).getMoves());   
         assertEquals(1, resultParties.get(0).getMove(1).getMoveNumber());
-        assertEquals(Piece.ChessColor.white, resultParties.get(0).getMove(1).getPlayer());
+        assertEquals(Piece.ChessPlayer.white, resultParties.get(0).getMove(1).getPlayer());
         assertEquals("f4", resultParties.get(0).getMove(1).getMoveContent());
         assertEquals(1, resultParties.get(0).getMove(2).getMoveNumber());
-        assertEquals(Piece.ChessColor.black, resultParties.get(0).getMove(2).getPlayer());
+        assertEquals(Piece.ChessPlayer.black, resultParties.get(0).getMove(2).getPlayer());
         assertEquals("b6", resultParties.get(0).getMove(2).getMoveContent());
         assertEquals(-1, resultParties.get(0).getMove(2).getPartyID());
     }    

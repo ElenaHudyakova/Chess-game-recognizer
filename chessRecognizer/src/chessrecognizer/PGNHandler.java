@@ -4,6 +4,7 @@
  */
 package chessrecognizer;
 
+import chessrecognizer.pieces.Piece;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -103,11 +104,11 @@ public class PGNHandler {
                 party.addMove(new Move(party.getId(), 
                         currentMoveInLineNumber,
                         matcher.group(1),
-                        Piece.ChessColor.white));
+                        Piece.ChessPlayer.white));
                 party.addMove(new Move(party.getId(), 
                         currentMoveInLineNumber,
                         matcher.group(2),
-                        Piece.ChessColor.black));   
+                        Piece.ChessPlayer.black));   
                 currentMoveInLineNumber++;
             }            
         }         

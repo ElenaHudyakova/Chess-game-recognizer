@@ -4,6 +4,8 @@
  */
 package chessrecognizer;
 
+import chessrecognizer.pieces.Piece;
+import chessrecognizer.pieces.PawnPiece;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.io.FileOutputStream;
@@ -67,12 +69,18 @@ public class PartyTest {
         Party party = PGNHandler.parseParties(fileName).get(0);
         party.generateViews();
         
-        Piece blackPawn = new Piece(2, 7, Piece.Type.pawn, Piece.ChessColor.black, true);
+        Piece blackPawn = new PawnPiece(2, 7, Piece.ChessPlayer.black);
+        blackPawn.isToMove = true;
+        ArrayList<Piece> pieces = party.getViews().get(2).getPieces();
+        System.out.println(pieces.size());
+        for (Piece piece:pieces){
+            System.out.println(piece.toString());
+        }
         
         assertNotNull(party.getViews());
         assertEquals(3, party.getViews().size());
-        assertNull(party.getViews().get(2).getFigure(6,2));
-        assertEquals(blackPawn, party.getViews().get(1).getFigure(2,7));
+        assertNull(party.getViews().get(2).getPiece(6,2));
+        assertEquals(blackPawn, party.getViews().get(1).getPiece(2,7));
         
     }
     

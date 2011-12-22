@@ -4,7 +4,14 @@
  */
 package chessrecognizer;
 
-import chessrecognizer.Piece.Type;
+
+import chessrecognizer.pieces.Piece;
+import chessrecognizer.pieces.KnightPiece;
+import chessrecognizer.pieces.KingPiece;
+import chessrecognizer.pieces.QueenPiece;
+import chessrecognizer.pieces.RookPiece;
+import chessrecognizer.pieces.BishopPiece;
+import chessrecognizer.pieces.PawnPiece;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,14 +24,14 @@ public class Move {
     private int partyID;
     private int moveNumber;
     private String moveContent;
-    private Piece.ChessColor player;
+    private Piece.ChessPlayer player;
 
     public Move() {
         id = -1;
         partyID = -1;
     }
 
-    public Move(int partyID, int moveNumber, String moveContent, Piece.ChessColor player) {
+    public Move(int partyID, int moveNumber, String moveContent, Piece.ChessPlayer player) {
         this.partyID = partyID;
         this.moveNumber = moveNumber;
         this.moveContent = moveContent;
@@ -49,7 +56,7 @@ public class Move {
         return partyID;
     }
 
-    public Piece.ChessColor getPlayer() {
+    public Piece.ChessPlayer getPlayer() {
         return player;
     }
 
@@ -69,7 +76,7 @@ public class Move {
         this.partyID = partyID;
     }
 
-    public void setPlayer(Piece.ChessColor player) {
+    public void setPlayer(Piece.ChessPlayer player) {
         this.player = player;
     }
 
@@ -78,25 +85,25 @@ public class Move {
         return "Move{" + "id=" + id + ", partyID=" + partyID + ", moveNumber=" + moveNumber + ", moveContent=" + moveContent + ", player=" + player + '}';
     }
 
-
-    public Type parsePieceTypeToMove() {
+    
+    public Class parsePieceTypeToMove() {
         Pattern movePattern = Pattern.compile("([KRQNB])");       
         Matcher matcher = movePattern.matcher(this.moveContent);
         if (matcher.find()){
                 if (matcher.group(1).equals("K"))
-                    return Type.king;
+                    return KingPiece.class;
                 if (matcher.group(1).equals("R"))
-                    return Type.rook;
+                    return RookPiece.class;
                 if (matcher.group(1).equals("Q"))
-                    return Type.queen;
+                    return QueenPiece.class;
                 if (matcher.group(1).equals("N"))
-                    return Type.knight;
+                    return KnightPiece.class;
                 if (matcher.group(1).equals("B"))
-                    return Type.bishop;
-                return Type.noType;
+                    return BishopPiece.class;
+                return Piece.class;
         }
         else
-            return Type.pawn;
+            return PawnPiece.class;
     }
     
     public int parseRankMoveTo(){
