@@ -16,7 +16,7 @@ public class ChessRecognizerApp extends SingleFrameApplication {
      * At startup create and show the main frame of the application.
      */
     @Override protected void startup() {
-        show(new ChessRecognizerView(this));
+        //show(new ChessRecognizerView(this));
     }
 
     /**
@@ -38,7 +38,7 @@ public class ChessRecognizerApp extends SingleFrameApplication {
     /**
      * Main method launching the application.
      */
-    public static void main(String[] args) {
+    public static void main1(String[] args) {
         launch(ChessRecognizerApp.class, args);
     }
 }

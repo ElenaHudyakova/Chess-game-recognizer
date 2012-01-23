@@ -4,6 +4,7 @@
  */
 package chessrecognizer.pieces;
 
+import chessrecognizer.Move;
 import chessrecognizer.View;
 
 /**
@@ -11,11 +12,68 @@ import chessrecognizer.View;
  * @author Lenkas
  */
 public class RookPiece extends Piece {
-    public RookPiece(int file, int rank, ChessPlayer chessColor) {
+    public RookPiece(int file, int rank, int chessColor) {
         super(file, rank, chessColor);
     }
+       
+    @Override
+    public void moveTo(Move move, View view) {           
+        if (move.isKingCastling){
+            //System.out.println(file+" "+rank);
+            this.file = 6;            
+            return;
+        }
+        if (move.isQueenCastling){
+            this.file = 4;
+            return;
+        }
+
+        super.moveTo(move, view);
+    }
+    
+    
+    public String getImagePath(){
+        if (player==Piece.BLACK_PLAYER)
+            return "images/rook_black.png";
+        else
+            return "images/rook_white.png";
+    }
+    
+    //NEED REFACTORING!!!
+    public boolean isThereObstacle(int fileMoveTo, int rankMoveTo, View view){
+        if (file==fileMoveTo){
+            if (rank<rankMoveTo){                
+                for (int rankIterator=rank+1; rankIterator<=rankMoveTo-1; rankIterator++)
+                    if (view.getPiece(file, rankIterator)!=null)
+                        return true; 
+                return false;
+            } else{                                    
+                for (int rankIterator=rank-1; rankIterator>=rankMoveTo+1; rankIterator--)
+                    if (view.getPiece(file, rankIterator)!=null)
+                        return true;                                            
+                return false;
+            }                
+        } 
+        if (rank==rankMoveTo){
+            if (file<fileMoveTo){
+                for (int fileIterator=file+1; fileIterator<=fileMoveTo; fileIterator++)
+                    if (view.getPiece(fileIterator, rank)!=null)
+                        return true;   
+                return false;
+            } else{
+                for (int fileIterator=file-1; fileIterator>=fileMoveTo; fileIterator--)
+                    if (view.getPiece(fileIterator, rank)!=null)
+                        return true;   
+                return false;
+            }             
+        }
+        return true;
+    }
+    
+    @Override
     public boolean canMoveTo(int fileMoveTo, int rankMoveTo, View view) {           
-                return (((file==fileMoveTo+1)||(file==fileMoveTo-1))&&
-                        ((rank==rankMoveTo+2)||(rank==rankMoveTo-2)));      
+        if (!super.canMoveTo(fileMoveTo, rankMoveTo, view))
+            return false;
+        return ((file==fileMoveTo)||(rank==rankMoveTo));      
     }  
 }

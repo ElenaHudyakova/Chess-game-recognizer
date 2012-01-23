@@ -113,11 +113,10 @@ public class PGNHandlerTest {
         assertEquals(1, resultParties.size());        
         assertEquals("F/S Return Match", resultParties.get(0).getEvent());
         assertEquals("Belgrade, Serbia Yugoslavia|JUG", resultParties.get(0).getSite());
-        assertEquals(new Date(1992, 4, 11), resultParties.get(0).getDate());
         assertEquals("29", resultParties.get(0).getRound());
         assertEquals("Fischer, Robert J.", resultParties.get(0).getWhite());
         assertEquals("Spassky, Boris V.", resultParties.get(0).getBlack());
-        assertEquals(Party.PartyResult.DRAW, resultParties.get(0).getResult());
+        assertEquals("1/2-1/2", resultParties.get(0).getResult());
 
     }
 
@@ -133,11 +132,10 @@ public class PGNHandlerTest {
         assertEquals(2, resultParties.size());        
         assertEquals("F/S Return Match", resultParties.get(1).getEvent());
         assertEquals("Belgrade, Serbia Yugoslavia|JUG", resultParties.get(1).getSite());
-        assertEquals(new Date(1992, 4, 1), resultParties.get(1).getDate());
         assertEquals("29.1", resultParties.get(1).getRound());
         assertEquals("Fischer, Robert J.", resultParties.get(1).getWhite());
         assertEquals("Spassky, Boris V.", resultParties.get(1).getBlack());
-        assertEquals(Party.PartyResult.BLACK_WIN, resultParties.get(1).getResult());
+        assertEquals("0-1", resultParties.get(1).getResult());
 
     }   
     
@@ -152,10 +150,10 @@ public class PGNHandlerTest {
         assertNotNull(resultParties);
         assertNotNull(resultParties.get(0).getMoves());   
         assertEquals(1, resultParties.get(0).getMove(1).getMoveNumber());
-        assertEquals(Piece.ChessPlayer.white, resultParties.get(0).getMove(1).getPlayer());
+        assertEquals(Piece.WHITE_PLAYER, resultParties.get(0).getMove(1).getPlayer());
         assertEquals("f4", resultParties.get(0).getMove(1).getMoveContent());
         assertEquals(1, resultParties.get(0).getMove(2).getMoveNumber());
-        assertEquals(Piece.ChessPlayer.black, resultParties.get(0).getMove(2).getPlayer());
+        assertEquals(Piece.BLACK_PLAYER, resultParties.get(0).getMove(2).getPlayer());
         assertEquals("b6", resultParties.get(0).getMove(2).getMoveContent());
         assertEquals(-1, resultParties.get(0).getMove(2).getPartyID());
     }    
@@ -174,6 +172,17 @@ public class PGNHandlerTest {
         assertEquals(30, resultParties.get(0).getMove(59).getMoveNumber());//последний ход
         assertEquals("Bc1", resultParties.get(0).getMove(59).getMoveContent());       
     }
+    
+    @Test
+    public void testFullParty() throws FileNotFoundException {
+        System.out.println("testFullParty");
+        String file_name = "test_party.pgn";    
+        
+        List<Party> resultParties = PGNHandler.parseParties(file_name);
+        
+        assertNotNull(resultParties);
+        assertEquals("?", resultParties.get(0).getEvent());
+    }    
     
     @Test
     public void testParseManyMovesTwoParties() throws FileNotFoundException {
@@ -201,11 +210,11 @@ public class PGNHandlerTest {
                     "[White \"Fischer, Robert J.\"]\n" +
                     "[Black \"Spassky, Boris V.\"]\n" +
                     "[Result \"1/2-1/2\"]\n\n" +
-                  "1. f4 b6 2. Nf3 Bb7 3. e3 c5 4. b3 Nc6 5. Bb5 Nf6 6. Bb2 e6 7. Bxc6 Bxc6 8. O-O " +
-                  "Be7 9. Qe1 O-O 10. d3 Rc8 11. Nbd2 d5 12. Ne5 Ba8 13. Qg3 Nh5 14. Qh3 g6 15. g4 " +
-                  "Nf6 16. g5 Nh5 17. Rf3 d4 18. e4 Bxg5 19. Raf1 Nxf4 20. Rxf4 Bxf4 21. Rxf4 Qg5+ " +
-                  "22. Qg4 Qxe5 23. Nf3 Qg7 24. Nd2 e5 25. Rf2 Rc6 26. Nf1 Rf6 27. Rg2 Rf4 28. Qe2 " +
-                  "f5 29. Ng3 fxe4 30. Bc1 e3\n\n");
+                  "1. f4 b6 2. Nf3 Bb7 3. e3 c5 4. b3 Nc6 5. Bb5 Nf6 6. Bb2 e6 7. Bxc6 Bxc6 8. O-O Be7 " +
+                  "9. Qe1 O-O 10. d3 Rc8 11. Nbd2 d5 12. Ne5 Ba8 13. Qg3 Nh5 14. Qh3 g6 15. g4 Nf6 " +
+                  "16. g5 Nh5 17. Rf3 d4 18. e4 Bxg5 19. Raf1 Nxf4 20. Rxf4 Bxf4 21. Rxf4 Qg5+ " +
+                  "22. Qg4 Qxe5 23. Nf3 Qg7 24. Nd2 e5 25. Rf2 Rc6 26. Nf1 Rf6 27. Rg2 Rf4 28. Qe2 f5 " +
+                  "29. Ng3 fxe4 30. Bc1 e3\n\n");
             
             writer.close();
         } catch (UnsupportedEncodingException ex) {

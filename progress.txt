@@ -6,9 +6,13 @@ Important Party method generateViews() generate views to the party called it acc
 Now this method can genetate views to only simple moves:
 1. Pawn moves (without captures)
 2. Knight moves(-//-)
+3. Rook moves(-//-)
+4. Bishop
+5. King
+6. Queen
 
 I have refactored my code, so that for every type of piece i have a subclass of class Piece. 
-Then i will implement generating views to other type of figures moves. When I'll do it, i will implement captures and finally such special things as castling, en passant (for pawns) and promotion. 
+Views are generated for almost every type of move (captures, castling). Its en passant (for pawns) and promotion left. 
 
-Then I will work on my DBHandler.
-Then I will work on my GUI.
+I have created my db on server. Started to implement DBHandler (method connect and addParty). 
+GUI is ready. Now i will implement it.

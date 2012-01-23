@@ -11,11 +11,30 @@ import chessrecognizer.View;
  * @author Lenkas
  */
 public class QueenPiece extends Piece {
-    public QueenPiece(int file, int rank, ChessPlayer chessColor) {
+    public QueenPiece(int file, int rank, int chessColor) {
         super(file, rank, chessColor);
     }
+    
+    public boolean isThereObstacle(int fileMoveTo, int rankMoveTo, View view){
+        Piece rook = new RookPiece(file, rank, player);
+        Piece bishop = new BishopPiece(file, rank, player);
+        return (rook.isThereObstacle(fileMoveTo, rankMoveTo, view)&&bishop.isThereObstacle(fileMoveTo, rankMoveTo, view));
+    }
+    
+    
+    public String getImagePath(){
+        if (player==Piece.BLACK_PLAYER)
+            return "images/queen_black.png";
+        else
+            return "images/queen_white.png";
+    }
+    
+    @Override
     public boolean canMoveTo(int fileMoveTo, int rankMoveTo, View view) {           
-                return (((file==fileMoveTo+1)||(file==fileMoveTo-1))&&
-                        ((rank==rankMoveTo+2)||(rank==rankMoveTo-2)));      
+        if (!super.canMoveTo(fileMoveTo, rankMoveTo, view))
+            return false; 
+        Piece rook = new RookPiece(file, rank, player);
+        Piece bishop = new BishopPiece(file, rank, player);
+        return (rook.canMoveTo(fileMoveTo, rankMoveTo, view)||bishop.canMoveTo(fileMoveTo, rankMoveTo, view));      
     }  
 }

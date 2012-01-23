@@ -4,6 +4,8 @@
  */
 package chessrecognizer;
 
+import java.util.List;
+import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -44,23 +46,24 @@ public class DBHandlerTest {
     public void testConnect() {
         System.out.println("connect");
         DBHandler instance = new DBHandler();
-        boolean expResult = false;
+        boolean expResult = true;
         boolean result = instance.connect();
+        instance.disconnect();
         assertEquals(expResult, result);
-        fail("The test case is a prototype.");
     }
 
-    /**
-     * Test of disconnect method, of class DBHandler.
-     */
+    
     @Test
-    public void testDisconnect() {
-        System.out.println("disconnect");
-        DBHandler instance = new DBHandler();
-        boolean expResult = false;
-        boolean result = instance.disconnect();
-        assertEquals(expResult, result);
-        fail("The test case is a prototype.");
+    public void testAddParty(){
+        System.out.println("testAddParty");
+        DBHandler dbHandler = new DBHandler();
+        dbHandler.connect();
+        List<Party> parties = PGNHandler.parseParties("test_party.PGN");
+        boolean result = dbHandler.addParty(parties.get(0));
+        dbHandler.disconnect();
+        System.out.println(parties.get(0).getMoves().size());
+        assertEquals(true, result);
+        
     }
 }
 

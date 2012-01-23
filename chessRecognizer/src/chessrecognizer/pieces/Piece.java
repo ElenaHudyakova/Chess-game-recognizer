@@ -4,9 +4,9 @@
  */
 package chessrecognizer.pieces;
 
+import chessrecognizer.ChessPosition;
 import chessrecognizer.Move;
 import chessrecognizer.View;
-import chessrecognizer.pieces.PawnPiece;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,24 +16,55 @@ import java.util.logging.Logger;
  */
 public abstract class Piece implements Cloneable{
     
-    public enum ChessPlayer{white, black};
+    public final static int WHITE_PLAYER=1, BLACK_PLAYER=0;
 
     protected int file;//от 1 до 8
-    protected ChessPlayer player;
+    protected int player;
     protected int rank;//от 1 до 8
-    public boolean isToMove;//будет ли ходить
-
+    public ChessPosition previousMovePosition;
     
-    public Piece(int file, int rank,  ChessPlayer color) {
+    public Piece(int file, int rank,  int color) {
         this.rank = rank;
         this.file = file;
         this.player = color;
-        this.isToMove = false;
+        previousMovePosition = null;
+    }
+    
+    public static String getFile(int file){
+        if (file==1)
+            return "a";
+        
+        if (file==2)
+            return "b";
+        
+        if (file==3)
+            return "c";
+
+        if (file==4)
+            return "d";
+
+        if (file==5)
+            return "e";
+
+        if (file==6)
+            return "f";
+
+        if (file==7)
+            return "g";
+
+        if (file==8)
+            return "h";
+
+        return null;
+        
+      
     }
 
-    public void moveTo(int fileMoveTo, int rankMoveTo, View view) {
-        file = fileMoveTo;
-        rank = rankMoveTo;        
+    public void moveTo(Move move, View view) {           
+        if ((view.getPiece(move.fileTo, move.rankTo)!=null)&&(move.isCaptionMove))
+            view.getPieces().remove(view.getPiece(move.fileTo, move.rankTo));
+        file = move.fileTo;
+        rank = move.rankTo;
     }
     
     @Override
@@ -46,7 +77,7 @@ public abstract class Piece implements Cloneable{
         }
     }
 
-    public ChessPlayer getPlayer() {
+    public int getPlayer() {
         return player;
     }
 
@@ -58,25 +89,32 @@ public abstract class Piece implements Cloneable{
         return rank;
     }
 
-    public abstract boolean canMoveTo(int fileMoveTo, int rankMoveTo, View view);
+    protected boolean canMoveTo(int fileMoveTo, int rankMoveTo, View view){           
+        if (view.getPiece(fileMoveTo, rankMoveTo)!=null)
+            if (view.getPiece(fileMoveTo, rankMoveTo).getPlayer()==this.getPlayer())
+                return false;
+        if (isThereObstacle(fileMoveTo, rankMoveTo, view))
+            return false; 
+        return true;
+    }
+    
+    public abstract boolean isThereObstacle(int fileMoveTo, int rankMoveTo, View view);
+    public abstract String getImagePath();
     
     public boolean satisfyTo(Move move, View view) {
-        Class pieceTypeToMove = move.parsePieceTypeToMove();
-        int fileMoveTo = move.parseFileMoveTo();
-        int rankMoveTo = move.parseRankMoveTo();
-        if (this instanceof PawnPiece) {
-            fileMoveTo++; 
-        }
-    
-        return (this.getClass()==pieceTypeToMove)&&
+        if (move.fileFrom!=null)
+            if (move.fileFrom!=file)
+                return false;           
+        
+        if (move.rankFrom!=null)
+            if (move.rankFrom!=rank)
+                return false;        
+            
+        return (this.getClass()==move.movingPiece)&&
                (this.getPlayer()==move.getPlayer()&&
-                this.canMoveTo(fileMoveTo, rankMoveTo, view));        
+                this.canMoveTo(move.fileTo, move.rankTo, view));        
     }
 
-    @Override
-    public String toString() {
-        return "Piece{" + getClass().toString() + ", "+ file + " " + rank +", " + player + ", isToMove=" + isToMove + '}';
-    }
 
     @Override
     public boolean equals(Object obj) {
@@ -96,19 +134,16 @@ public abstract class Piece implements Cloneable{
         if (this.rank != other.rank) {
             return false;
         }
-        if (this.isToMove != other.isToMove) {
-            return false;
-        }
         return true;
     }
 
+    
+    
     @Override
     public int hashCode() {
         int hash = 3;
         hash = 53 * hash + this.file;
-        hash = 53 * hash + (this.player != null ? this.player.hashCode() : 0);
         hash = 53 * hash + this.rank;
-        hash = 53 * hash + (this.isToMove ? 1 : 0);
         return hash;
     }
 

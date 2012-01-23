@@ -5,13 +5,7 @@
 package chessrecognizer;
 
 
-import chessrecognizer.pieces.Piece;
-import chessrecognizer.pieces.KnightPiece;
-import chessrecognizer.pieces.KingPiece;
-import chessrecognizer.pieces.QueenPiece;
-import chessrecognizer.pieces.RookPiece;
-import chessrecognizer.pieces.BishopPiece;
-import chessrecognizer.pieces.PawnPiece;
+import chessrecognizer.pieces.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,121 +18,137 @@ public class Move {
     private int partyID;
     private int moveNumber;
     private String moveContent;
-    private Piece.ChessPlayer player;
-
-    public Move() {
-        id = -1;
-        partyID = -1;
-    }
-
-    public Move(int partyID, int moveNumber, String moveContent, Piece.ChessPlayer player) {
-        this.partyID = partyID;
-        this.moveNumber = moveNumber;
-        this.moveContent = moveContent;
-        this.player = player;
-    }
+    private int player;
     
-    
+    //REFACTORING?
+    public boolean isCheck = false;
+    public boolean isCheckmate = false;
+    public boolean isCaptionMove = false;
 
-    public int getId() {
-        return id;
+    public boolean isKingCastling = false;
+    public boolean isQueenCastling = false;
+    public boolean isPromotion = false;
+    public Class promotionPiece = null;
+    public Integer fileFrom = null;
+    public Integer fileTo = null;
+    public Integer rankFrom = null;
+    public Integer rankTo = null;
+    public Class movingPiece = null;
+
+    public int getMoveNumber() {
+        return moveNumber;
     }
 
     public String getMoveContent() {
         return moveContent;
     }
 
-    public int getMoveNumber() {
-        return moveNumber;
-    }
-
     public int getPartyID() {
         return partyID;
     }
-
-    public Piece.ChessPlayer getPlayer() {
-        return player;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setMoveContent(String moveContent) {
-        this.moveContent = moveContent;
-    }
-
-    public void setMoveNumber(int moveNumber) {
-        this.moveNumber = moveNumber;
-    }
-
-    public void setPartyID(int partyID) {
+    
+    public Move(int partyID, int moveNumber, String moveContent, int player) {
         this.partyID = partyID;
-    }
-
-    public void setPlayer(Piece.ChessPlayer player) {
+        this.moveNumber = moveNumber;
+        this.moveContent = moveContent;
         this.player = player;
     }
-
+    
     @Override
     public String toString() {
-        return "Move{" + "id=" + id + ", partyID=" + partyID + ", moveNumber=" + moveNumber + ", moveContent=" + moveContent + ", player=" + player + '}';
+        if (player==Piece.WHITE_PLAYER)
+            return moveNumber + "     " + moveContent;
+        else
+            return moveNumber + "                    " + moveContent;
     }
 
-    
-    public Class parsePieceTypeToMove() {
-        Pattern movePattern = Pattern.compile("([KRQNB])");       
-        Matcher matcher = movePattern.matcher(this.moveContent);
-        if (matcher.find()){
-                if (matcher.group(1).equals("K"))
-                    return KingPiece.class;
-                if (matcher.group(1).equals("R"))
-                    return RookPiece.class;
-                if (matcher.group(1).equals("Q"))
-                    return QueenPiece.class;
-                if (matcher.group(1).equals("N"))
-                    return KnightPiece.class;
-                if (matcher.group(1).equals("B"))
-                    return BishopPiece.class;
-                return Piece.class;
+    public void parseMove(){
+        if ("O-O".equals(moveContent)){
+            isKingCastling = true;
+            return;
         }
-        else
-            return PawnPiece.class;
+        if ("O-O-O".equals(moveContent)){
+            isQueenCastling = true;
+            return;
+        }           
+        
+        Pattern movePattern = Pattern.compile("([KRQNB]?)([a-h]?)([1-8]?)(x?)([a-h])([1-8])(=?)([KRQNB]?)([\\+#]?)");       
+        
+        Matcher matcher = movePattern.matcher(this.moveContent);
+        if (matcher.find()){
+            isCheck = ("+".equals(matcher.group(9)));
+            isCheckmate = ("#".equals(matcher.group(9)));
+            isCaptionMove = ("x".equals(matcher.group(4)));
+            if (!"".equals(matcher.group(7))){
+                isPromotion = true;
+                promotionPiece = parsePieceType(matcher.group(8));
+            }
+            if (!"".equals(matcher.group(1))){
+                movingPiece = parsePieceType(matcher.group(1));
+            } else
+                movingPiece = PawnPiece.class;
+                        
+            if (!"".equals(matcher.group(2))){
+                
+                fileFrom = parseFile(matcher.group(2));
+            }
+            if (!"".equals(matcher.group(3))){
+                rankFrom = parseRank(matcher.group(3));
+            }            
+            fileTo = parseFile(matcher.group(5));
+            rankTo = parseRank(matcher.group(6));
+        } else{
+            System.out.print(this.moveContent + " " + this.moveNumber);
+            throw new RuntimeException("Invalid move");
+        }
+            
+        
     }
     
-    public int parseRankMoveTo(){
-        Pattern movePattern = Pattern.compile(".+([1-8])");       
-        Matcher matcher = movePattern.matcher(this.moveContent);
-        if (matcher.find())
-            return Integer.parseInt(matcher.group(1));
+    private Class parsePieceType(String type) {
+        if (type.equals("K"))
+            return KingPiece.class;
+        if (type.equals("R"))
+            return RookPiece.class;
+        if (type.equals("Q"))
+            return QueenPiece.class;
+        if (type.equals("N"))
+            return KnightPiece.class;
+        if (type.equals("B"))
+            return BishopPiece.class;
+        throw new RuntimeException("Invalid move");
+    }
+    
+    private int parseRank(String rank){
+        int intRank = Integer.parseInt(rank);
+        if ((intRank<=8)&&(intRank>=1))
+            return Integer.parseInt(rank);
         else
             throw new RuntimeException("Invalid move");
     }
 
-    public int parseFileMoveTo(){
-        Pattern movePattern = Pattern.compile(".*([a-h])[1-8]");       
-        Matcher matcher = movePattern.matcher(this.moveContent);
-        if (matcher.find()){
-                if (matcher.group(1).equals("a"))
-                    return 1;
-                if (matcher.group(1).equals("b"))
-                    return 2;
-                if (matcher.group(1).equals("c"))
-                    return 3;
-                if (matcher.group(1).equals("d"))
-                    return 4;
-                if (matcher.group(1).equals("e"))
-                    return 5;
-                if (matcher.group(1).equals("f"))
-                    return 6;
-                if (matcher.group(1).equals("g"))
-                    return 7;
-                if (matcher.group(1).equals("h"))
-                    return 8;                
-                throw new RuntimeException("Invalid move");            
-        }            
-        else
-            throw new RuntimeException("Invalid move");
-    }    
+    private int parseFile(String file){        
+        if (file.equals("a"))
+            return 1;
+        if (file.equals("b"))
+            return 2;
+        if (file.equals("c"))
+            return 3;
+        if (file.equals("d"))
+            return 4;
+        if (file.equals("e"))
+            return 5;
+        if (file.equals("f"))
+            return 6;
+        if (file.equals("g"))
+            return 7;
+        if (file.equals("h"))
+            return 8;                
+        throw new RuntimeException("Invalid move");            
+    }
+
+    public int getPlayer() {
+        return player;
+    }
   
 }

@@ -5,9 +5,8 @@
 package chessrecognizer;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+//import java.util.Date;
+import java.sql.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,16 +15,14 @@ import java.util.regex.Pattern;
  * @author Lenkas
  */
 public class Party {   
-    public enum PartyResult{WHITE_WIN, BLACK_WIN, DRAW, NO_RESULT};
-
     private int id;
     private String event;
     private String site;
     private String round;
     private String white;
     private String black;
-    private Date date;
-    private PartyResult result;
+    private String date;
+    private String result;
     private ArrayList<Move> moves = new ArrayList<Move>();//нумерация с 1
     private ArrayList<View> views = new ArrayList<View>();//нумерация с 0
 
@@ -44,6 +41,10 @@ public class Party {
     public View getView(int viewSequenceNumber) {
         return views.get(viewSequenceNumber);
     }    
+    
+//    public String getStingDate(){
+//        return date.getYear()+"."+date.getMonth()+"."+date.getDay();
+//    }
 
     
     public void addMove(Move move){
@@ -54,7 +55,7 @@ public class Party {
         this.id = -1;
     }
 
-    public Party(String event, String site, String round, String white, String black, Date date, PartyResult result) {
+    public Party(String event, String site, String round, String white, String black, String date, String result) {
         this.event = event;
         this.site = site;
         this.round = round;
@@ -64,15 +65,25 @@ public class Party {
         this.result = result;
     }
 
+    public Party(int id, String event, String site, String round, String white, String black, String date, String result) {
+        this.id = id;
+        this.event = event;
+        this.site = site;
+        this.round = round;
+        this.white = white;
+        this.black = black;
+        this.date = date;
+        this.result = result;
+    }
     
     public String getBlack() {
         return black;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
-
+    
     public String getEvent() {
         return event;
     }
@@ -81,7 +92,7 @@ public class Party {
         return id;
     }
 
-    public PartyResult getResult() {
+    public String getResult() {
         return result;
     }
 
@@ -101,7 +112,7 @@ public class Party {
         this.black = black;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -113,31 +124,11 @@ public class Party {
         this.id = id;
     }
 
-    public void setResult(PartyResult result) {
-        if ((result==PartyResult.WHITE_WIN)||(result==PartyResult.BLACK_WIN)||(result==PartyResult.DRAW))
+    public void setResult(String result) throws RuntimeException{
+        if (result.equals("1/2-1/2")||result.equals("1-0")||result.equals("0-1")||result.equals("*")){                    
             this.result = result;
-        else    
-            throw new RuntimeException("Invalid result");
-    }
-
-    public void setResult(String partyResult) throws RuntimeException{
-        if (partyResult.equals("1/2-1/2")){                    
-            setResult(PartyResult.DRAW);
             return;
         }
-        if (partyResult.equals("1-0")){
-            setResult(PartyResult.WHITE_WIN);
-            return;
-        }                      
-        if (partyResult.equals("0-1")){
-            setResult(PartyResult.BLACK_WIN);
-            return;
-        }                          
-        if (partyResult.equals("*")){
-            setResult(PartyResult.NO_RESULT); 
-            return;
-        }                
-         
         throw new RuntimeException("Invalid party result");
     }
     
@@ -156,27 +147,28 @@ public class Party {
     
     @Override
     public String toString() {
-        return "Party{" + "id=" + id + ", event=" + event + ", site=" + site + ", round=" + round + ", white=" + white + ", black=" + black + ", date=" + date + ", result=" + result + '}';
+        return "ID " + id + ", " + event + ", раунд " + round + ", " + date;
     }
 
-    void setDate(String date) throws RuntimeException{
-        Pattern datePattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
-        Matcher matcher = datePattern.matcher(date);
-        if (matcher.find())
-            setDate(new Date(Integer.parseInt(matcher.group(1)), 
-                             Integer.parseInt(matcher.group(3)), 
-                             Integer.parseInt(matcher.group(2))));
-        else
-            throw new RuntimeException("Invalid date");
-    }
-    
+//    public void setDate(String date) throws RuntimeException{
+//        Pattern datePattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
+//        Matcher matcher = datePattern.matcher(date);
+//        if (matcher.find())
+//            setDate(new Date(Integer.parseInt(matcher.group(1)), 
+//                             Integer.parseInt(matcher.group(3)), 
+//                             Integer.parseInt(matcher.group(2))));
+//        else
+//            date = null;
+//            //throw new RuntimeException("Invalid date");
+//    }
+//    
     public void generateViews(){
         View initialView = new View();
         initialView.setInitialView();
         views.add(initialView);
         
         for (Move move:moves){
-            View view = new View();
+            View view = new View();            
             view.setMoveView(move, views.get(views.size()-1));
             views.add(view);
         }

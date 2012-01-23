@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  */
 public class PGNHandler {
     
-    private static void parseTagPair(String line, Party party){
+    private static boolean parseTagPair(String line, Party party){
         Pattern tagPairPattern = Pattern.compile("\\[(.+) \"(.+)\"\\]");
         Matcher matcher = tagPairPattern.matcher(line);
         boolean matchFound = matcher.find();
@@ -36,13 +36,15 @@ public class PGNHandler {
             if (matcher.group(1).toLowerCase().equals("round"))
                 party.setRound(matcher.group(2));
             if (matcher.group(1).toLowerCase().equals("result"))
-                party.setResult(matcher.group(2));                       
+                party.setResult(matcher.group(2)); 
+            return true;
         }
+        return false;
     }
     
     private static void parseLine(String line, Party party){
-        parseTagPair(line, party);
-        parseMoves(line, party);
+        if (!parseTagPair(line, party))
+            parseMoves(line, party);
     }
     
     public static List<Party> parseParties(String file_name){
@@ -50,12 +52,14 @@ public class PGNHandler {
         try{
             BufferedReader PGNreader = new BufferedReader(new FileReader(file_name));
             String currentLine;
+            Party currentParty = null;
             while ((currentLine = PGNreader.readLine())!=null){
                 if (isNewParty(currentLine)){
                    parties.add(new Party()); 
+                   currentParty = parties.get(parties.size()-1);
                 }
-                Party currentParty = parties.get(parties.size()-1);
-                parseLine(currentLine, currentParty);
+                if (currentParty!=null)
+                    parseLine(currentLine, currentParty);
             }
             
         } catch (Exception e){
@@ -88,7 +92,7 @@ public class PGNHandler {
     }
 
     private static void parseMoves(String line, Party party) {
-        String [] moves = line.split("\\d+\\. ");
+        String [] moves = line.split("\\d+\\. ?");
         int currentMoveInLineNumber;
         try{
             currentMoveInLineNumber = getFirstMoveInLineNumber(line);
@@ -96,21 +100,32 @@ public class PGNHandler {
             return;
         }
         
-        Pattern movePattern = Pattern.compile("(\\w+) (\\w+)");
         
-        for (String oneSideMove:moves){
-            Matcher matcher = movePattern.matcher(oneSideMove);
+        for (String move:moves){
+            Pattern movePattern = Pattern.compile("([\\w-\\+]+) ([\\w-\\+]+)");
+            Matcher matcher = movePattern.matcher(move);
             if (matcher.find()){
                 party.addMove(new Move(party.getId(), 
                         currentMoveInLineNumber,
                         matcher.group(1),
-                        Piece.ChessPlayer.white));
+                        Piece.WHITE_PLAYER));
                 party.addMove(new Move(party.getId(), 
                         currentMoveInLineNumber,
                         matcher.group(2),
-                        Piece.ChessPlayer.black));   
+                        Piece.BLACK_PLAYER));   
                 currentMoveInLineNumber++;
-            }            
+            } else{//последний ход: только белый ходит
+                movePattern = Pattern.compile("([\\w-]+)");
+                matcher = movePattern.matcher(move);
+                if (matcher.find()){
+                    party.addMove(new Move(party.getId(), 
+                            currentMoveInLineNumber,
+                            matcher.group(1),
+                            Piece.WHITE_PLAYER));
+                }
+            }
+                
+            
         }         
   
     }
