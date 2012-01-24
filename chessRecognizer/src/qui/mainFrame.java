@@ -14,35 +14,28 @@ import chessrecognizer.DBHandler;
 import chessrecognizer.Move;
 import chessrecognizer.PGNHandler;
 import chessrecognizer.Party;
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
-import javax.swing.AbstractListModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
-import javax.swing.ListModel;
 import org.jdesktop.application.Action;
 
-
-/**
- *
- * @author Lenkas
- */
 public class mainFrame extends javax.swing.JFrame {
 
-    /** Creates new form mainFrame */
-    public mainFrame() {
-        initComponents();
-    }
-    
-    public static final String TIME_FORMAT = "HH:mm:ss";
+    private static final String TIME_FORMAT = "HH:mm:ss";
     private Party currentParty;
     
-    public static String getTime() {
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat(TIME_FORMAT);
-        return sdf.format(cal.getTime());
+    
+    public mainFrame() {
+        this.setTitle("Chess Recognizer");
+        initComponents();        
+    }
+     
+    private static String getTime() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(TIME_FORMAT);
+        return simpleDateFormat.format(calendar.getTime());
     }
 
 
@@ -63,6 +56,9 @@ public class mainFrame extends javax.swing.JFrame {
         jButton12 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
         panel1 = new java.awt.Panel();
         jLabel2 = new javax.swing.JLabel();
         eventLabel = new javax.swing.JLabel();
@@ -86,11 +82,13 @@ public class mainFrame extends javax.swing.JFrame {
         jButton13 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance().getContext().getResourceMap(mainFrame.class);
+        setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
+        setResizable(false);
 
         chessBoardCanvas.setName("chessBoardCanvas"); // NOI18N
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance().getContext().getResourceMap(mainFrame.class);
         panel3.setBackground(resourceMap.getColor("panel3.background")); // NOI18N
         panel3.setName("panel3"); // NOI18N
 
@@ -115,6 +113,15 @@ public class mainFrame extends javax.swing.JFrame {
         jButton2.setText(resourceMap.getString("jButton2.text")); // NOI18N
         jButton2.setName("jButton2"); // NOI18N
 
+        jLabel4.setText(resourceMap.getString("jLabel4.text")); // NOI18N
+        jLabel4.setName("jLabel4"); // NOI18N
+
+        jLabel5.setText(resourceMap.getString("jLabel5.text")); // NOI18N
+        jLabel5.setName("jLabel5"); // NOI18N
+
+        jTextField1.setText(resourceMap.getString("boardSituationFEN.text")); // NOI18N
+        jTextField1.setName("boardSituationFEN"); // NOI18N
+
         javax.swing.GroupLayout panel3Layout = new javax.swing.GroupLayout(panel3);
         panel3.setLayout(panel3Layout);
         panel3Layout.setHorizontalGroup(
@@ -122,20 +129,26 @@ public class mainFrame extends javax.swing.JFrame {
             .addGroup(panel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel3Layout.createSequentialGroup()
+                        .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel5))
                     .addGroup(panel3Layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 314, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton3)))
-                    .addComponent(jLabel1))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton12, javax.swing.GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
+                            .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButton3))))
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel4))
+                .addContainerGap())
         );
         panel3Layout.setVerticalGroup(
             panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(panel3Layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -146,7 +159,13 @@ public class mainFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton12))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(61, Short.MAX_VALUE))
         );
 
         panel1.setBackground(resourceMap.getColor("panel1.background")); // NOI18N
@@ -182,30 +201,16 @@ public class mainFrame extends javax.swing.JFrame {
         panel1Layout.setHorizontalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(eventLabel)))
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(blackLabel))
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(whiteLabel))
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(roundLabel))
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(siteLabel))
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(resultLabel))
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(dateLabel)))
+                    .addComponent(jLabel2)
+                    .addComponent(eventLabel)
+                    .addComponent(blackLabel)
+                    .addComponent(whiteLabel)
+                    .addComponent(roundLabel)
+                    .addComponent(siteLabel)
+                    .addComponent(resultLabel)
+                    .addComponent(dateLabel))
                 .addContainerGap(116, Short.MAX_VALUE))
         );
         panel1Layout.setVerticalGroup(
@@ -227,7 +232,7 @@ public class mainFrame extends javax.swing.JFrame {
                 .addComponent(resultLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(dateLabel)
-                .addContainerGap(175, Short.MAX_VALUE))
+                .addContainerGap(92, Short.MAX_VALUE))
         );
 
         panel2.setBackground(resourceMap.getColor("panel2.background")); // NOI18N
@@ -298,7 +303,7 @@ public class mainFrame extends javax.swing.JFrame {
                         .addComponent(jButton11)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton9))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -358,11 +363,11 @@ public class mainFrame extends javax.swing.JFrame {
                         .addComponent(panel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(panel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(panel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -370,94 +375,72 @@ public class mainFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(panel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(panel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(panel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(chessBoardCanvas, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(panel4, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)))
+                        .addComponent(panel4, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+
 private void movesListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_movesListValueChanged
     int index = movesList.getSelectedIndex();
     if (index != -1){
-        ChessCanvas c = (ChessCanvas)chessBoardCanvas;
-        c.setView(currentParty.getView(index+1));
+        movesList.ensureIndexIsVisible(movesList.getSelectedIndex());
+        ChessCanvas tmpCanvas = (ChessCanvas)chessBoardCanvas;
+        tmpCanvas.setView(currentParty.getView(index+1));
         chessBoardCanvas.repaint();
-        portingInfo.setText(portingInfo.getText()+"\n " + index);
     }
 }//GEN-LAST:event_movesListValueChanged
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(mainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(mainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(mainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(mainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-
+public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
-
             public void run() {
                 new mainFrame().setVisible(true);
             }
         });
     }
 
+    private String getFilePathFromBrowser(){
+        JFileChooser fileChooser = new JFileChooser();
+        int returnedValue = fileChooser.showOpenDialog(this);
+        if (returnedValue == JFileChooser.APPROVE_OPTION) 
+            return fileChooser.getSelectedFile().getAbsolutePath(); 
+        else
+            return null;      
+    }
+    
+    private void importFromPGN(String filePath){
+        List<Party> parties = PGNHandler.parseParties(filePath);
+        DBHandler dbHandler = new DBHandler();
+        dbHandler.connect();
+        for (Party party:parties)
+            dbHandler.addParty(party);
+        dbHandler.disconnect();
+    }
+
     @Action
     public void importButtonPressed() {
-        JFileChooser fc = new JFileChooser();
-        int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-            List<Party> parties = PGNHandler.parseParties(file.getAbsolutePath());
-            
-            portingInfo.setText(portingInfo.getText()+"\n" + 
-                    getTime()+" Начинается импорт файла " + file.getAbsolutePath());
-            
+        String filePath = getFilePathFromBrowser();
+        if (filePath != null) {
+            portingInfo.append("\n" + getTime() + " Начинается импорт файла " + filePath);
             try{
-                DBHandler dbHandler = new DBHandler();
-                dbHandler.connect();
-                boolean result = dbHandler.addParty(parties.get(0));
-                dbHandler.disconnect();
-
-                portingInfo.setText(portingInfo.getText()+"\n" + 
-                        getTime()+" Импорт файла в базу данных успешно завершен");
+                importFromPGN(filePath);
+                portingInfo.append("\n" + getTime()+" Импорт файла в базу данных успешно завершен");
             } catch (Exception e){
-                portingInfo.setText(portingInfo.getText()+"\n" + 
-                    getTime()+" К сожалению, при импорте файла произошли ошибки"); 
+                portingInfo.append("\n" + getTime()+" К сожалению, при импорте файла произошли ошибки"); 
+                portingInfo.append("\n" + e.toString()); 
             }              
         } 
-
     }
 
     @Action
@@ -475,36 +458,44 @@ private void movesListValueChanged(javax.swing.event.ListSelectionEvent evt) {//
         
         mainPartiesList.setModel(model);
     }
+    
+    private void setCurrentPartyInfo(){
+        eventLabel.setText("Event: " + currentParty.getEvent());
+        siteLabel.setText("Site: " + currentParty.getSite());
+        dateLabel.setText("Date: " + currentParty.getDate());
+        roundLabel.setText("Round: " + currentParty.getRound());
+        resultLabel.setText("Result: " + currentParty.getResult());
+        whiteLabel.setText("White player: " + currentParty.getWhite());
+        blackLabel.setText("Black player: " + currentParty.getBlack());
+    }
+    
+    private Party getPartyFromDB(int id){
+        DBHandler dbHandler = new DBHandler();
+        dbHandler.connect();
+        Party party = dbHandler.getFullPartyInfo(id);
+        dbHandler.disconnect();   
+        return party;
+    }
+    
+    
+    private void addCurrentPartyMovesToList() {
+        DefaultListModel<Move> movesModel = new DefaultListModel<Move>();
+
+        for (Move move:currentParty.getMoves())
+            movesModel.add(movesModel.getSize(), move);
+ 
+        movesList.setModel(movesModel);
+    }
 
     @Action
     public void showParty() {
         int index = mainPartiesList.getSelectedIndex();
         if (index != -1){
             Party party = (Party)mainPartiesList.getModel().getElementAt(index);
-            DBHandler dbHandler = new DBHandler();
-            dbHandler.connect();
-            party = dbHandler.getFullPartyInfo(party.getId());
-            dbHandler.disconnect();
-                    
-            currentParty = party;
-            currentParty.generateViews();
-            
-            eventLabel.setText(eventLabel.getText()+ party.getEvent());
-            siteLabel.setText(siteLabel.getText()+ party.getSite());
-            dateLabel.setText(dateLabel.getText()+ party.getDate());
-            roundLabel.setText(roundLabel.getText()+ party.getRound());
-            resultLabel.setText(resultLabel.getText()+ party.getResult());
-            whiteLabel.setText(whiteLabel.getText()+ party.getWhite());
-            blackLabel.setText(blackLabel.getText()+ party.getBlack());
-            
-            
-            DefaultListModel<Move> model = new DefaultListModel<Move>();
-        
-            for (Move move:party.getMoves()){
-                model.add(model.getSize(), move);
-            }
-        
-            movesList.setModel(model);
+            currentParty = getPartyFromDB(party.getId());
+            currentParty.generateViews();            
+            setCurrentPartyInfo();            
+            addCurrentPartyMovesToList();
         }
     }
 
@@ -521,13 +512,13 @@ private void movesListValueChanged(javax.swing.event.ListSelectionEvent evt) {//
 
     @Action
     public void showNextMove() {
-        if (movesList.getSelectedIndex()!=movesList.getComponentCount()-1)
+        if (movesList.getSelectedIndex()!=currentParty.getMoves().size()-1)
             movesList.setSelectedIndex(movesList.getSelectedIndex()+1);
     }
 
     @Action
     public void showLastMove() {
-        movesList.setSelectedIndex(movesList.getComponentCount());
+        movesList.setSelectedIndex(currentParty.getMoves().size()-1);
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -547,8 +538,11 @@ private void movesListValueChanged(javax.swing.event.ListSelectionEvent evt) {//
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTextField jTextField1;
     private javax.swing.JList mainPartiesList;
     private javax.swing.JList movesList;
     private java.awt.Panel panel1;
@@ -561,4 +555,5 @@ private void movesListValueChanged(javax.swing.event.ListSelectionEvent evt) {//
     private javax.swing.JLabel siteLabel;
     private javax.swing.JLabel whiteLabel;
     // End of variables declaration//GEN-END:variables
+
 }

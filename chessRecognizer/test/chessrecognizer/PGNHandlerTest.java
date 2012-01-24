@@ -149,13 +149,13 @@ public class PGNHandlerTest {
         
         assertNotNull(resultParties);
         assertNotNull(resultParties.get(0).getMoves());   
-        assertEquals(1, resultParties.get(0).getMove(1).getMoveNumber());
-        assertEquals(Piece.WHITE_PLAYER, resultParties.get(0).getMove(1).getPlayer());
-        assertEquals("f4", resultParties.get(0).getMove(1).getMoveContent());
-        assertEquals(1, resultParties.get(0).getMove(2).getMoveNumber());
-        assertEquals(Piece.BLACK_PLAYER, resultParties.get(0).getMove(2).getPlayer());
-        assertEquals("b6", resultParties.get(0).getMove(2).getMoveContent());
-        assertEquals(-1, resultParties.get(0).getMove(2).getPartyID());
+        assertEquals(1, resultParties.get(0).getMoves().get(0).getMoveNumber());
+        assertEquals(Piece.WHITE_PLAYER, resultParties.get(0).getMoves().get(0).getPlayer());
+        assertEquals("f4", resultParties.get(0).getMoves().get(0).getMoveContent());
+        assertEquals(1, resultParties.get(0).getMoves().get(1).getMoveNumber());
+        assertEquals(Piece.BLACK_PLAYER, resultParties.get(0).getMoves().get(1).getPlayer());
+        assertEquals("b6", resultParties.get(0).getMoves().get(1).getMoveContent());
+        assertEquals(-1, resultParties.get(0).getMoves().get(1).getPartyID());
     }    
     
     @Test
@@ -169,20 +169,18 @@ public class PGNHandlerTest {
         assertNotNull(resultParties);
         assertNotNull(resultParties.get(0).getMoves());   
         assertEquals(30*2, resultParties.get(0).getMoves().size());
-        assertEquals(30, resultParties.get(0).getMove(59).getMoveNumber());//последний ход
-        assertEquals("Bc1", resultParties.get(0).getMove(59).getMoveContent());       
-    }
+        assertEquals(30, resultParties.get(0).getMoves().get(58).getMoveNumber());//последний ход
+        assertEquals("Bc1", resultParties.get(0).getMoves().get(58).getMoveContent());       
+    }  
     
     @Test
-    public void testFullParty() throws FileNotFoundException {
-        System.out.println("testFullParty");
-        String file_name = "test_party.pgn";    
+    public void testParseTagWithApostrophe(){
+        System.out.println("testParseTagWithApostrophe");
+        Party party = new Party();
+        PGNHandler.parseTagPair("[White \"O'Kelly Alberic (BEL)\"]", party);
         
-        List<Party> resultParties = PGNHandler.parseParties(file_name);
-        
-        assertNotNull(resultParties);
-        assertEquals("?", resultParties.get(0).getEvent());
-    }    
+        System.out.print(party.getWhite());
+    }
     
     @Test
     public void testParseManyMovesTwoParties() throws FileNotFoundException {

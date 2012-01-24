@@ -23,17 +23,13 @@ public class Party {
     private String black;
     private String date;
     private String result;
-    private ArrayList<Move> moves = new ArrayList<Move>();//нумерация с 1
-    private ArrayList<View> views = new ArrayList<View>();//нумерация с 0
+    private ArrayList<Move> moves = new ArrayList<Move>();
+    private ArrayList<View> views = new ArrayList<View>();
 
     public ArrayList<Move> getMoves() {
         return moves;
     }
     
-    public Move getMove(int moveSequenceNumber) {
-        return moves.get(moveSequenceNumber-1);
-    }    
-
     public ArrayList<View> getViews() {
         return views;
     }

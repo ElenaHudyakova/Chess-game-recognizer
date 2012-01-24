@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  */
 public class PGNHandler {
     
-    private static boolean parseTagPair(String line, Party party){
+    public static boolean parseTagPair(String line, Party party){
         Pattern tagPairPattern = Pattern.compile("\\[(.+) \"(.+)\"\\]");
         Matcher matcher = tagPairPattern.matcher(line);
         boolean matchFound = matcher.find();
@@ -83,7 +83,6 @@ public class PGNHandler {
     
     private static int getFirstMoveInLineNumber(String line){
         Pattern moveNumberPattern = Pattern.compile("(\\d+)\\.");
-        //System.out.println(line);
         Matcher matcher = moveNumberPattern.matcher(line);
         if (matcher.find())
             return Integer.parseInt(matcher.group(1));
@@ -99,8 +98,7 @@ public class PGNHandler {
         } catch (RuntimeException e){
             return;
         }
-        
-        
+                
         for (String move:moves){
             Pattern movePattern = Pattern.compile("([\\w-\\+]+) ([\\w-\\+]+)");
             Matcher matcher = movePattern.matcher(move);
@@ -123,11 +121,8 @@ public class PGNHandler {
                             matcher.group(1),
                             Piece.WHITE_PLAYER));
                 }
-            }
-                
-            
-        }         
-  
+            }    
+        }       
     }
-    
+  
 }

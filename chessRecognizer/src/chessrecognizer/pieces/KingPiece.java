@@ -16,6 +16,11 @@ public class KingPiece extends Piece {
         super(file, rank, chessColor);
     } 
     
+        
+    public int getSerializationCode(){
+        return 1+this.player*8;
+    }
+    
     @Override
     public void moveTo(Move move, View view) {           
         if (move.isKingCastling){

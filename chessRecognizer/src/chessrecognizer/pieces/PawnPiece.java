@@ -15,6 +15,10 @@ public class PawnPiece extends Piece {
     public PawnPiece(int file, int rank, int chessColor) {
         super(file, rank, chessColor);
     }
+        
+    public int getSerializationCode(){
+        return 3+this.player*8;
+    }
     
     public boolean isThereObstacle(int fileMoveTo, int rankMoveTo, View view){
         if (((player==Piece.WHITE_PLAYER)&&(rank==rankMoveTo-1))||

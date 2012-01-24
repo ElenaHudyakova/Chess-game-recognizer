@@ -16,10 +16,14 @@ public class RookPiece extends Piece {
         super(file, rank, chessColor);
     }
        
+        
+    public int getSerializationCode(){
+        return 5+this.player*8;
+    }
+    
     @Override
     public void moveTo(Move move, View view) {           
         if (move.isKingCastling){
-            //System.out.println(file+" "+rank);
             this.file = 6;            
             return;
         }
@@ -43,12 +47,12 @@ public class RookPiece extends Piece {
     public boolean isThereObstacle(int fileMoveTo, int rankMoveTo, View view){
         if (file==fileMoveTo){
             if (rank<rankMoveTo){                
-                for (int rankIterator=rank+1; rankIterator<=rankMoveTo-1; rankIterator++)
+                for (int rankIterator=rank+1; rankIterator<rankMoveTo-1; rankIterator++)
                     if (view.getPiece(file, rankIterator)!=null)
                         return true; 
                 return false;
             } else{                                    
-                for (int rankIterator=rank-1; rankIterator>=rankMoveTo+1; rankIterator--)
+                for (int rankIterator=rank-1; rankIterator>rankMoveTo+1; rankIterator--)
                     if (view.getPiece(file, rankIterator)!=null)
                         return true;                                            
                 return false;
@@ -56,12 +60,12 @@ public class RookPiece extends Piece {
         } 
         if (rank==rankMoveTo){
             if (file<fileMoveTo){
-                for (int fileIterator=file+1; fileIterator<=fileMoveTo; fileIterator++)
+                for (int fileIterator=file+1; fileIterator<fileMoveTo; fileIterator++)
                     if (view.getPiece(fileIterator, rank)!=null)
                         return true;   
                 return false;
             } else{
-                for (int fileIterator=file-1; fileIterator>=fileMoveTo; fileIterator--)
+                for (int fileIterator=file-1; fileIterator>fileMoveTo; fileIterator--)
                     if (view.getPiece(fileIterator, rank)!=null)
                         return true;   
                 return false;

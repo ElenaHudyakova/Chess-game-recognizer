@@ -1,18 +1,9 @@
-﻿﻿﻿Began developing PGNHandler: now it can parse tag pairs from PGN-file for several parties.
-Now it can parse tag pairs and movetext for several parties from one PNG-file.
+﻿﻿﻿
 
-Began developing classes Party and View. View represents condition of the game at one moment, so party can be represented as a set of view.
-Important Party method generateViews() generate views to the party called it according to the moves stored in party.
-Now this method can genetate views to only simple moves:
-1. Pawn moves (without captures)
-2. Knight moves(-//-)
-3. Rook moves(-//-)
-4. Bishop
-5. King
-6. Queen
+Almost ready! :)
 
-I have refactored my code, so that for every type of piece i have a subclass of class Piece. 
-Views are generated for almost every type of move (captures, castling). Its en passant (for pawns) and promotion left. 
-
-I have created my db on server. Started to implement DBHandler (method connect and addParty). 
-GUI is ready. Now i will implement it.
+To do list:
+1. Party search by different party properties (site, event, date etc.)
+2. Export to PGN
+3. Deserialization of views
+4. Parsing FEN to view instance

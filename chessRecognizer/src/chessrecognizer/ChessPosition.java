@@ -11,9 +11,14 @@ package chessrecognizer;
 public class ChessPosition {
     private int file, rank;
 
-    ChessPosition(int file, int rank) {
+    public ChessPosition(int file, int rank) {
         this.file = file;
         this.rank = rank;
+    }
+
+    public ChessPosition() {
+        this.file = 1;
+        this.rank = 1;
     }
 
     public int getFile() {

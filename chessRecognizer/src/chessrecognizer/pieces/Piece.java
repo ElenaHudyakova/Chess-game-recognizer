@@ -9,7 +9,6 @@ import chessrecognizer.Move;
 import chessrecognizer.View;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 /**
  *
  * @author Lenkas
@@ -17,7 +16,12 @@ import java.util.logging.Logger;
 public abstract class Piece implements Cloneable{
     
     public final static int WHITE_PLAYER=1, BLACK_PLAYER=0;
-
+    private final static String [] FILES = new String[]{"a", "b", "c", "d", "e", "f", "g", "h"}; 
+    private static enum serializationCodes {bishop, king, };
+    private static Class [] pieces = new Class[]{BishopPiece.class, KingPiece.class, 
+                                                KnightPiece.class, PawnPiece.class, 
+                                                QueenPiece.class, RookPiece.class};
+    
     protected int file;//от 1 до 8
     protected int player;
     protected int rank;//от 1 до 8
@@ -31,33 +35,7 @@ public abstract class Piece implements Cloneable{
     }
     
     public static String getFile(int file){
-        if (file==1)
-            return "a";
-        
-        if (file==2)
-            return "b";
-        
-        if (file==3)
-            return "c";
-
-        if (file==4)
-            return "d";
-
-        if (file==5)
-            return "e";
-
-        if (file==6)
-            return "f";
-
-        if (file==7)
-            return "g";
-
-        if (file==8)
-            return "h";
-
-        return null;
-        
-      
+        return FILES[file-1];
     }
 
     public void moveTo(Move move, View view) {           
@@ -100,6 +78,7 @@ public abstract class Piece implements Cloneable{
     
     public abstract boolean isThereObstacle(int fileMoveTo, int rankMoveTo, View view);
     public abstract String getImagePath();
+    public abstract int getSerializationCode();
     
     public boolean satisfyTo(Move move, View view) {
         if (move.fileFrom!=null)
@@ -115,6 +94,29 @@ public abstract class Piece implements Cloneable{
                 this.canMoveTo(move.fileTo, move.rankTo, view));        
     }
 
+    public void setFile(int file) {
+        this.file = file;
+    }
+
+    public void setPlayer(int player) {
+        this.player = player;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
+
+    public static Piece getPieceFromSerializationCode(int serializationCode){
+        try{
+            Class pieceClass = pieces[serializationCode%8];
+            Piece piece = (Piece)pieceClass.newInstance();
+            piece.setPlayer(serializationCode/8);
+            return piece;
+        } catch (Exception e){
+            System.out.println(e.toString());
+            return null;
+        }        
+    }
 
     @Override
     public boolean equals(Object obj) {

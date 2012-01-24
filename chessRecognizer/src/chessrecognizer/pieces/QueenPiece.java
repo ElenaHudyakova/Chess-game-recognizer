@@ -15,6 +15,11 @@ public class QueenPiece extends Piece {
         super(file, rank, chessColor);
     }
     
+        
+    public int getSerializationCode(){
+       return 4+this.player*8;
+    }
+    
     public boolean isThereObstacle(int fileMoveTo, int rankMoveTo, View view){
         Piece rook = new RookPiece(file, rank, player);
         Piece bishop = new BishopPiece(file, rank, player);

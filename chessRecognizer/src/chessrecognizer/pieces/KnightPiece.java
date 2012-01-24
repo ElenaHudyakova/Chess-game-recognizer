@@ -17,6 +17,11 @@ public class KnightPiece extends Piece {
         super(file, rank, chessColor);
     }
        
+        
+    public int getSerializationCode(){
+        return 2+this.player*8;
+    }
+    
     public boolean isThereObstacle(int fileMoveTo, int rankMoveTo, View view){
         return false;
     }

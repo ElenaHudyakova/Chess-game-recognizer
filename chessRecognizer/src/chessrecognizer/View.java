@@ -43,6 +43,37 @@ public class View implements Cloneable {
         
     }
     
+    
+    
+    public long [] serialize(){        
+        long [] blobs = {0, 0, 0, 0};
+        for (int file=1; file<=8; file++)
+            for (int rank=1; rank<=8; rank++){
+                blobs[(file-1)/2] *= 16;
+                if (getPiece(file, rank)!=null)
+                    blobs[(file-1)/2]  += getPiece(file, rank).getSerializationCode();
+                else
+                    blobs[(file-1)/2]  += 14;
+            }
+        return blobs;
+    }
+
+    
+    public View(int blob) throws NoSuchMethodException{
+        for (int file=1; file<=8; file++)
+            for (int rank=1; rank<=8; rank++){
+                int pieceCode = blob % 16;                
+                blob /= 16;
+                if (pieceCode!=14)
+                    Piece.getPieceFromSerializationCode(pieceCode);
+                throw new NoSuchMethodException();
+            }
+    }
+    
+    public View(){
+      
+    }
+    
     public void setInitialView() {
         addInitialOneSidePieces(Piece.WHITE_PLAYER);
         addInitialOneSidePieces(Piece.BLACK_PLAYER);

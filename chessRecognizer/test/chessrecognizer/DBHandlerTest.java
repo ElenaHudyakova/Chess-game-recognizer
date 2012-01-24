@@ -46,10 +46,9 @@ public class DBHandlerTest {
     public void testConnect() {
         System.out.println("connect");
         DBHandler instance = new DBHandler();
-        boolean expResult = true;
-        boolean result = instance.connect();
+
+        instance.connect();
         instance.disconnect();
-        assertEquals(expResult, result);
     }
 
     
@@ -59,11 +58,8 @@ public class DBHandlerTest {
         DBHandler dbHandler = new DBHandler();
         dbHandler.connect();
         List<Party> parties = PGNHandler.parseParties("test_party.PGN");
-        boolean result = dbHandler.addParty(parties.get(0));
-        dbHandler.disconnect();
-        System.out.println(parties.get(0).getMoves().size());
-        assertEquals(true, result);
-        
+        dbHandler.addParty(parties.get(0));
+        dbHandler.disconnect();        
     }
 }
 
