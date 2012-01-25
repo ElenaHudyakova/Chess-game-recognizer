@@ -15,7 +15,9 @@ public class QueenPiece extends Piece {
         super(file, rank, chessColor);
     }
     
-        
+    public QueenPiece(){}  
+    
+    
     public int getSerializationCode(){
        return 4+this.player*8;
     }

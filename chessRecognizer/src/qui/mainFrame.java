@@ -14,7 +14,9 @@ import chessrecognizer.DBHandler;
 import chessrecognizer.Move;
 import chessrecognizer.PGNHandler;
 import chessrecognizer.Party;
+import chessrecognizer.View;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -25,11 +27,12 @@ public class mainFrame extends javax.swing.JFrame {
 
     private static final String TIME_FORMAT = "HH:mm:ss";
     private Party currentParty;
-    
+    private DBHandler dbHandler = new DBHandler();
     
     public mainFrame() {
         this.setTitle("Chess Recognizer");
-        initComponents();        
+        initComponents();
+        dbHandler.externalConnect();
     }
      
     private static String getTime() {
@@ -48,17 +51,32 @@ public class mainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        buttonGroup2 = new javax.swing.ButtonGroup();
+        buttonGroup3 = new javax.swing.ButtonGroup();
+        buttonGroup4 = new javax.swing.ButtonGroup();
+        buttonGroup5 = new javax.swing.ButtonGroup();
         chessBoardCanvas = new ChessCanvas();
         panel3 = new java.awt.Panel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        mainPartiesList = new javax.swing.JList();
+        partiesList = new javax.swing.JList();
         jLabel1 = new javax.swing.JLabel();
         jButton12 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        FENsituation = new javax.swing.JTextField();
+        label1 = new java.awt.Label();
+        label2 = new java.awt.Label();
+        label3 = new java.awt.Label();
+        label4 = new java.awt.Label();
+        label5 = new java.awt.Label();
+        isFENsearch = new java.awt.Checkbox();
+        isEventsearch = new java.awt.Checkbox();
+        label6 = new java.awt.Label();
+        eventToSearch = new javax.swing.JTextField();
+        isDateSearch = new java.awt.Checkbox();
+        label7 = new java.awt.Label();
+        dateToSearch = new javax.swing.JTextField();
         panel1 = new java.awt.Panel();
         jLabel2 = new javax.swing.JLabel();
         eventLabel = new javax.swing.JLabel();
@@ -80,6 +98,7 @@ public class mainFrame extends javax.swing.JFrame {
         portingInfo = new java.awt.TextArea();
         jButton1 = new javax.swing.JButton();
         jButton13 = new javax.swing.JButton();
+        isLocalDB = new java.awt.Checkbox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance().getContext().getResourceMap(mainFrame.class);
@@ -94,17 +113,18 @@ public class mainFrame extends javax.swing.JFrame {
 
         jScrollPane1.setName("jScrollPane1"); // NOI18N
 
-        mainPartiesList.setName("mainPartiesList"); // NOI18N
-        jScrollPane1.setViewportView(mainPartiesList);
+        partiesList.setName("partiesList"); // NOI18N
+        jScrollPane1.setViewportView(partiesList);
 
         jLabel1.setFont(resourceMap.getFont("jLabel1.font")); // NOI18N
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
 
+        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance().getContext().getActionMap(mainFrame.class, this);
+        jButton12.setAction(actionMap.get("searchPartiesButtonPressed")); // NOI18N
         jButton12.setText(resourceMap.getString("jButton12.text")); // NOI18N
         jButton12.setName("jButton12"); // NOI18N
 
-        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance().getContext().getActionMap(mainFrame.class, this);
         jButton3.setAction(actionMap.get("showParty")); // NOI18N
         jButton3.setText(resourceMap.getString("jButton3.text")); // NOI18N
         jButton3.setName("jButton3"); // NOI18N
@@ -113,36 +133,82 @@ public class mainFrame extends javax.swing.JFrame {
         jButton2.setText(resourceMap.getString("jButton2.text")); // NOI18N
         jButton2.setName("jButton2"); // NOI18N
 
-        jLabel4.setText(resourceMap.getString("jLabel4.text")); // NOI18N
-        jLabel4.setName("jLabel4"); // NOI18N
+        FENsituation.setText(resourceMap.getString("boardSituationFEN.text")); // NOI18N
+        FENsituation.setToolTipText(resourceMap.getString("boardSituationFEN.toolTipText")); // NOI18N
+        FENsituation.setName("boardSituationFEN"); // NOI18N
 
-        jLabel5.setText(resourceMap.getString("jLabel5.text")); // NOI18N
-        jLabel5.setName("jLabel5"); // NOI18N
+        label1.setName("label1"); // NOI18N
 
-        jTextField1.setText(resourceMap.getString("boardSituationFEN.text")); // NOI18N
-        jTextField1.setName("boardSituationFEN"); // NOI18N
+        label2.setName("label2"); // NOI18N
+        label2.setText(resourceMap.getString("label2.text")); // NOI18N
+
+        label4.setName("label4"); // NOI18N
+        label4.setText(resourceMap.getString("label4.text")); // NOI18N
+
+        label5.setName("label5"); // NOI18N
+        label5.setText(resourceMap.getString("label5.text")); // NOI18N
+
+        isFENsearch.setLabel(resourceMap.getString("label")); // NOI18N
+        isFENsearch.setName(""); // NOI18N
+
+        isEventsearch.setName("isEventsearch"); // NOI18N
+
+        label6.setName("label6"); // NOI18N
+        label6.setText(resourceMap.getString("label6.text")); // NOI18N
+
+        eventToSearch.setText(resourceMap.getString("eventToSearch.text")); // NOI18N
+        eventToSearch.setToolTipText(resourceMap.getString("eventToSearch.toolTipText")); // NOI18N
+        eventToSearch.setName("eventToSearch"); // NOI18N
+
+        isDateSearch.setName("isDateSearch"); // NOI18N
+
+        label7.setName("label7"); // NOI18N
+        label7.setText(resourceMap.getString("label7.text")); // NOI18N
+
+        dateToSearch.setText(resourceMap.getString("dateToSearch.text")); // NOI18N
+        dateToSearch.setToolTipText(resourceMap.getString("dateToSearch.toolTipText")); // NOI18N
+        dateToSearch.setName("dateToSearch"); // NOI18N
 
         javax.swing.GroupLayout panel3Layout = new javax.swing.GroupLayout(panel3);
         panel3.setLayout(panel3Layout);
         panel3Layout.setHorizontalGroup(
             panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel3Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel3Layout.createSequentialGroup()
-                        .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel5))
                     .addGroup(panel3Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 314, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addContainerGap()
                         .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton12, javax.swing.GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
-                            .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButton3))))
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel4))
+                            .addGroup(panel3Layout.createSequentialGroup()
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 314, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
+                                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)))
+                            .addComponent(jLabel1)
+                            .addComponent(label5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(panel3Layout.createSequentialGroup()
+                                .addComponent(FENsituation, javax.swing.GroupLayout.PREFERRED_SIZE, 435, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(isFENsearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel3Layout.createSequentialGroup()
+                        .addGap(330, 330, 330)
+                        .addComponent(jButton12, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE))
+                    .addGroup(panel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(label6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(panel3Layout.createSequentialGroup()
+                                .addComponent(eventToSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 435, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(isEventsearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(panel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(label7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(panel3Layout.createSequentialGroup()
+                                .addComponent(dateToSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 435, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(isDateSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap())
         );
         panel3Layout.setVerticalGroup(
@@ -155,17 +221,32 @@ public class mainFrame extends javax.swing.JFrame {
                     .addGroup(panel3Layout.createSequentialGroup()
                         .addComponent(jButton3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton12))
+                        .addComponent(jButton2))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(11, 11, 11)
+                .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(panel3Layout.createSequentialGroup()
+                        .addComponent(label5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(1, 1, 1)
+                        .addComponent(FENsituation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(isFENsearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel4)
+                .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(panel3Layout.createSequentialGroup()
+                        .addComponent(label6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(1, 1, 1)
+                        .addComponent(eventToSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(isEventsearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(61, Short.MAX_VALUE))
+                .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(panel3Layout.createSequentialGroup()
+                        .addComponent(label7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(1, 1, 1)
+                        .addComponent(dateToSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(isDateSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                .addComponent(jButton12)
+                .addGap(19, 19, 19))
         );
 
         panel1.setBackground(resourceMap.getColor("panel1.background")); // NOI18N
@@ -211,7 +292,7 @@ public class mainFrame extends javax.swing.JFrame {
                     .addComponent(siteLabel)
                     .addComponent(resultLabel)
                     .addComponent(dateLabel))
-                .addContainerGap(116, Short.MAX_VALUE))
+                .addContainerGap(142, Short.MAX_VALUE))
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -232,7 +313,7 @@ public class mainFrame extends javax.swing.JFrame {
                 .addComponent(resultLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(dateLabel)
-                .addContainerGap(92, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         panel2.setBackground(resourceMap.getColor("panel2.background")); // NOI18N
@@ -279,7 +360,7 @@ public class mainFrame extends javax.swing.JFrame {
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panel2Layout.createSequentialGroup()
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(10, 10, 10)
                         .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jButton9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButton11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -293,9 +374,9 @@ public class mainFrame extends javax.swing.JFrame {
             .addGroup(panel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel3)
-                .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panel2Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
                         .addComponent(jButton5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton10)
@@ -303,7 +384,9 @@ public class mainFrame extends javax.swing.JFrame {
                         .addComponent(jButton11)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton9))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE))
+                    .addGroup(panel2Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -318,6 +401,7 @@ public class mainFrame extends javax.swing.JFrame {
         jButton1.setText(resourceMap.getString("jButton1.text")); // NOI18N
         jButton1.setName("jButton1"); // NOI18N
 
+        jButton13.setAction(actionMap.get("exportButtonPressed")); // NOI18N
         jButton13.setText(resourceMap.getString("jButton13.text")); // NOI18N
         jButton13.setName("jButton13"); // NOI18N
 
@@ -328,63 +412,69 @@ public class mainFrame extends javax.swing.JFrame {
             .addGroup(panel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(portingInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(panel4Layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton13, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(39, 39, 39))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel4Layout.createSequentialGroup()
-                        .addComponent(portingInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                        .addComponent(jButton13, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         panel4Layout.setVerticalGroup(
             panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(portingInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(portingInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton13))
-                .addContainerGap())
+                    .addComponent(jButton13)
+                    .addComponent(jButton1))
+                .addGap(26, 26, 26))
         );
+
+        isLocalDB.setLabel(resourceMap.getString("isLocalDB.label")); // NOI18N
+        isLocalDB.setName("isLocalDB"); // NOI18N
+        isLocalDB.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                isLocalDBItemStateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(11, 11, 11)
-                        .addComponent(chessBoardCanvas, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(panel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(chessBoardCanvas, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(panel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(panel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(panel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(isLocalDB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(panel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(21, 21, 21)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(panel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(chessBoardCanvas, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(panel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(panel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(chessBoardCanvas, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(panel4, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)))
+                        .addComponent(isLocalDB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(panel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panel4, javax.swing.GroupLayout.Alignment.LEADING, 0, 224, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -402,7 +492,16 @@ private void movesListValueChanged(javax.swing.event.ListSelectionEvent evt) {//
     }
 }//GEN-LAST:event_movesListValueChanged
 
+private void isLocalDBItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_isLocalDBItemStateChanged
+    dbHandler.disconnect();
+    if (isLocalDB.getState())
+        dbHandler.localConnect();
+    else
+        dbHandler.externalConnect();
+}//GEN-LAST:event_isLocalDBItemStateChanged
+
 public static void main(String args[]) {
+    
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new mainFrame().setVisible(true);
@@ -421,11 +520,8 @@ public static void main(String args[]) {
     
     private void importFromPGN(String filePath){
         List<Party> parties = PGNHandler.parseParties(filePath);
-        DBHandler dbHandler = new DBHandler();
-        dbHandler.connect();
         for (Party party:parties)
             dbHandler.addParty(party);
-        dbHandler.disconnect();
     }
 
     @Action
@@ -442,21 +538,21 @@ public static void main(String args[]) {
             }              
         } 
     }
-
-    @Action
-    public void refreshPartiesList() {
-        DBHandler dbHandler = new DBHandler();
-        dbHandler.connect();
-        List<Party> parties = dbHandler.getPartiesInfo("");
-        dbHandler.disconnect();
-
+    
+    private void showPartiesList(List<Party> parties){
         DefaultListModel<Party> model = new DefaultListModel<Party>();
         
         for (Party party:parties){
             model.add(model.getSize(), party);
         }
         
-        mainPartiesList.setModel(model);
+        partiesList.setModel(model);        
+    }
+
+    @Action
+    public void refreshPartiesList() {
+        List<Party> parties = dbHandler.getPartiesInfo("");
+        showPartiesList(parties);
     }
     
     private void setCurrentPartyInfo(){
@@ -470,10 +566,7 @@ public static void main(String args[]) {
     }
     
     private Party getPartyFromDB(int id){
-        DBHandler dbHandler = new DBHandler();
-        dbHandler.connect();
-        Party party = dbHandler.getFullPartyInfo(id);
-        dbHandler.disconnect();   
+        Party party = dbHandler.getFullParty(id); 
         return party;
     }
     
@@ -485,17 +578,20 @@ public static void main(String args[]) {
             movesModel.add(movesModel.getSize(), move);
  
         movesList.setModel(movesModel);
+        
+        movesList.setSelectedIndex(0);
+        
     }
 
     @Action
     public void showParty() {
-        int index = mainPartiesList.getSelectedIndex();
+        int index = partiesList.getMinSelectionIndex();
         if (index != -1){
-            Party party = (Party)mainPartiesList.getModel().getElementAt(index);
+            Party party = (Party)partiesList.getModel().getElementAt(index);
             currentParty = getPartyFromDB(party.getId());
             currentParty.generateViews();            
             setCurrentPartyInfo();            
-            addCurrentPartyMovesToList();
+            addCurrentPartyMovesToList();            
         }
     }
 
@@ -520,12 +616,67 @@ public static void main(String args[]) {
     public void showLastMove() {
         movesList.setSelectedIndex(currentParty.getMoves().size()-1);
     }
+
     
+    public void searchParties(String fen) {
+        try{
+            View view = new View (fen);
+            long [] blob = view.serialize();
+            
+            
+            List<Party> parties = dbHandler.getPartiesInfo(blob);      
+            
+            showPartiesList(parties);
+        } catch (Exception e){          
+        }
+    }
+ 
+    @Action
+    public void searchPartiesButtonPressed() {
+        if (!FENsituation.getText().equals("")){
+            View view = new View (FENsituation.getText());
+            long [] blob = view.serialize();
+
+            List<Party> parties = dbHandler.getPartiesInfo(blob);    
+            showPartiesList(parties);
+        }
+    }
+
+    @Action
+    public void exportButtonPressed() {
+        
+        String filePath = getFilePathFromBrowser();
+        int [] selectedIndeces = partiesList.getSelectedIndices();
+        portingInfo.append("\n" + getTime() + " Начинается экспорт " + selectedIndeces.length + " партий в файл " + filePath);
+        List<Party> parties = new ArrayList<Party>();
+        for (int index:selectedIndeces){
+            Party party = (Party)partiesList.getModel().getElementAt(index);
+            parties.add(dbHandler.getFullParty(party.getId()));
+        }
+        PGNHandler.createPGNFile(parties, filePath);
+        portingInfo.append("\n" + getTime() + " Экспорт завершен ");
+        
+    }
+    
+
+   
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField FENsituation;
     private javax.swing.JLabel blackLabel;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.ButtonGroup buttonGroup3;
+    private javax.swing.ButtonGroup buttonGroup4;
+    private javax.swing.ButtonGroup buttonGroup5;
     private java.awt.Canvas chessBoardCanvas;
     private javax.swing.JLabel dateLabel;
+    private javax.swing.JTextField dateToSearch;
     private javax.swing.JLabel eventLabel;
+    private javax.swing.JTextField eventToSearch;
+    private java.awt.Checkbox isDateSearch;
+    private java.awt.Checkbox isEventsearch;
+    private java.awt.Checkbox isFENsearch;
+    private java.awt.Checkbox isLocalDB;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
@@ -538,17 +689,21 @@ public static void main(String args[]) {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JList mainPartiesList;
+    private java.awt.Label label1;
+    private java.awt.Label label2;
+    private java.awt.Label label3;
+    private java.awt.Label label4;
+    private java.awt.Label label5;
+    private java.awt.Label label6;
+    private java.awt.Label label7;
     private javax.swing.JList movesList;
     private java.awt.Panel panel1;
     private java.awt.Panel panel2;
     private java.awt.Panel panel3;
     private java.awt.Panel panel4;
+    private javax.swing.JList partiesList;
     private java.awt.TextArea portingInfo;
     private javax.swing.JLabel resultLabel;
     private javax.swing.JLabel roundLabel;

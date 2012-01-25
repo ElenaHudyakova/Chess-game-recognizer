@@ -57,7 +57,37 @@ public class View implements Cloneable {
             }
         return blobs;
     }
-
+    
+    public View (String notationFEN){
+        try{
+            String [] infoBlocks = notationFEN.split(" ");
+            String [] boardLines = infoBlocks[0].split("/");
+            for (int rank=8; rank>=1; rank--){
+                
+                int file = 0;                
+                for (int i=0; i<boardLines[8-rank].length(); i++){
+                    String currentSimbol = Character.toString(boardLines[8-rank].charAt(i));
+                    try{
+                        int fileShift = Integer.parseInt(currentSimbol);
+                        file += fileShift;
+                    } catch (Exception e){ 
+                        file += 1;
+                        Class pieceClass = Move.parsePieceType(currentSimbol);
+                        Piece piece = (Piece)pieceClass.newInstance();
+                        piece.setFile(file);
+                        piece.setRank(rank);
+                        if (currentSimbol.equals(currentSimbol.toUpperCase())){
+                            piece.setPlayer(Piece.WHITE_PLAYER);
+                        } else
+                            piece.setPlayer(Piece.BLACK_PLAYER);
+                        this.pieces.add(piece);
+                    }                                        
+                }                
+            }
+        } catch (Exception e){
+            System.out.println(e.toString());
+        }
+    }
     
     public View(int blob) throws NoSuchMethodException{
         for (int file=1; file<=8; file++)

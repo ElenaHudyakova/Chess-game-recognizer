@@ -34,10 +34,22 @@ public abstract class Piece implements Cloneable{
         previousMovePosition = null;
     }
     
+    public Piece (){
+        
+    }
+    
     public static String getFile(int file){
         return FILES[file-1];
     }
-
+    
+    public static int getFile(String file){
+        for (int i=1; i<=8; i++){
+            if (getFile(i).equals(file))
+                return i;
+        }
+        throw new RuntimeException("Invalid file coordinate");
+    }
+    
     public void moveTo(Move move, View view) {           
         if ((view.getPiece(move.fileTo, move.rankTo)!=null)&&(move.isCaptionMove))
             view.getPieces().remove(view.getPiece(move.fileTo, move.rankTo));

@@ -16,6 +16,8 @@ public class PawnPiece extends Piece {
         super(file, rank, chessColor);
     }
         
+    public PawnPiece(){}
+    
     public int getSerializationCode(){
         return 3+this.player*8;
     }

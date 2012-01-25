@@ -6,7 +6,9 @@ package chessrecognizer;
 
 import chessrecognizer.pieces.Piece;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -47,10 +49,10 @@ public class PGNHandler {
             parseMoves(line, party);
     }
     
-    public static List<Party> parseParties(String file_name){
+    public static List<Party> parseParties(String filePath){
         ArrayList<Party> parties = new ArrayList<Party>();
         try{
-            BufferedReader PGNreader = new BufferedReader(new FileReader(file_name));
+            BufferedReader PGNreader = new BufferedReader(new FileReader(filePath));
             String currentLine;
             Party currentParty = null;
             while ((currentLine = PGNreader.readLine())!=null){
@@ -68,9 +70,48 @@ public class PGNHandler {
         return parties;
     }
     
-    public static void createPGNFile(List<Party> parties){
-        
+    public static void createPGNFile(List<Party> parties, String filePath){
+        try{
+            FileWriter stream = new FileWriter(filePath);
+            BufferedWriter writer = new BufferedWriter(stream);
+            for (Party party:parties){
+                writer.write(PGNHandler.getAllTagPairs(party));
+                writer.write("\n");
+                writer.write(PGNHandler.getAllMoves(party));
+                writer.write("\n");
+            }
+            writer.close();
+        } catch (Exception e){
+            System.out.println(e.toString());
+        }
     }
+    
+    private static String getAllTagPairs(Party party){
+        String result = "";
+        result += "[Event \"" + party.getEvent() + "\"]\n";
+        result += "[Site \"" + party.getSite() + "\"]\n";
+        result += "[Date \"" + party.getDate() + "\"]\n";
+        result += "[Round \"" + party.getRound() + "\"]\n";
+        result += "[White \"" + party.getWhite() + "\"]\n";
+        result += "[Black \"" + party.getBlack() + "\"]\n";
+        result += "[Result \"" + party.getResult() + "\"]\n";        
+        return result;
+    }
+    
+    private static String getAllMoves(Party party){
+        String result = "";
+        
+        for (Move move:party.getMoves()){
+            if (move.getPlayer() == Piece.WHITE_PLAYER)
+                result += move.getMoveNumber() + ".";
+            result += move.getMoveContent() + " ";
+            if (move.getMoveNumber()%4==0 && move.getPlayer() == Piece.BLACK_PLAYER)
+                result += "\n";
+        }
+        result += "  " + party.getResult() + "\n";
+        
+        return result;
+    }    
 
     private static boolean isNewParty(String line) {
         Pattern tagPairPattern = Pattern.compile("\\[(.+) \"(.+)\"\\]");

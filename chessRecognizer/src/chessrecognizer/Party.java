@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  * @author Lenkas
  */
 public class Party {   
-    private int id;
+    private int id = -1;
     private String event;
     private String site;
     private String round;
@@ -48,7 +48,13 @@ public class Party {
     }
     
     public Party() {
-        this.id = -1;
+        this.event = "?";
+        this.site = "?";
+        this.round = "?";
+        this.white = "?";
+        this.black = "?";
+        this.date = "????.??.??";
+        this.result = "?";        
     }
 
     public Party(String event, String site, String round, String white, String black, String date, String result) {

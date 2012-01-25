@@ -47,7 +47,7 @@ public class DBHandlerTest {
         System.out.println("connect");
         DBHandler instance = new DBHandler();
 
-        instance.connect();
+        instance.externalConnect();
         instance.disconnect();
     }
 
@@ -56,7 +56,7 @@ public class DBHandlerTest {
     public void testAddParty(){
         System.out.println("testAddParty");
         DBHandler dbHandler = new DBHandler();
-        dbHandler.connect();
+        dbHandler.externalConnect();
         List<Party> parties = PGNHandler.parseParties("test_party.PGN");
         dbHandler.addParty(parties.get(0));
         dbHandler.disconnect();        

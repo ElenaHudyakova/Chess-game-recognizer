@@ -105,7 +105,8 @@ public class Move {
         
     }
     
-    private Class parsePieceType(String type) {
+    public static Class parsePieceType(String type) {
+        type = type.toUpperCase();
         if (type.equals("K"))
             return KingPiece.class;
         if (type.equals("R"))
@@ -116,6 +117,8 @@ public class Move {
             return KnightPiece.class;
         if (type.equals("B"))
             return BishopPiece.class;
+        if (type.equals("P"))
+            return PawnPiece.class;        
         throw new RuntimeException("Invalid move");
     }
     
@@ -127,24 +130,12 @@ public class Move {
             throw new RuntimeException("Invalid move");
     }
 
-    private int parseFile(String file){        
-        if (file.equals("a"))
-            return 1;
-        if (file.equals("b"))
-            return 2;
-        if (file.equals("c"))
-            return 3;
-        if (file.equals("d"))
-            return 4;
-        if (file.equals("e"))
-            return 5;
-        if (file.equals("f"))
-            return 6;
-        if (file.equals("g"))
-            return 7;
-        if (file.equals("h"))
-            return 8;                
-        throw new RuntimeException("Invalid move");            
+    private int parseFile(String file){  
+        try{
+            return Piece.getFile(file);
+        } catch (Exception e){
+            throw new RuntimeException("Invalid move"); 
+        }                        
     }
 
     public int getPlayer() {

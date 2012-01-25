@@ -16,6 +16,8 @@ public class KingPiece extends Piece {
         super(file, rank, chessColor);
     } 
     
+    public KingPiece(){     
+    }
         
     public int getSerializationCode(){
         return 1+this.player*8;

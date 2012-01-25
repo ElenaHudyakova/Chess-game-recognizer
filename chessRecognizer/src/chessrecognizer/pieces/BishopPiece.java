@@ -15,6 +15,9 @@ public class BishopPiece extends Piece {
         super(file, rank, chessColor);
     }
     
+    public BishopPiece(){     
+    }
+        
     public int getSerializationCode(){
         return 0+this.player*8;
     }

@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DBHandler{
     Connection connection = null;
@@ -23,7 +24,7 @@ public class DBHandler{
         }           
     }
 
-    public void connect(){    
+    public void externalConnect(){    
         String userName = "chess";
         String password = "lenusik5";
         String url = "jdbc:mysql://62.76.47.251:3306/chess";
@@ -57,7 +58,7 @@ public class DBHandler{
                 
                 Statement insertPartyQuery = connection.createStatement();
                 insertPartyQuery.executeUpdate("insert into parties (event, site, date, round, white, black, result) values ('" + 
-                                                party.getEvent().replace("'", "''") + "', '" + party.getSite() + "', '" +
+                                                party.getEvent().replace("'", "''") + "', '" + party.getSite().replace("'", "''") + "', '" +
                                                 party.getDate() +  "', '" + party.getRound() + "', '" +
                                                 party.getWhite().replace("'", "''") + "', '" + 
                                                 party.getBlack().replace("'", "''") + "', '" + party.getResult()+ "');");
@@ -91,7 +92,7 @@ public class DBHandler{
         try {
             ArrayList<Party> parties = new ArrayList<Party>();
             Statement selectQuery = connection.createStatement();
-            ResultSet rs = selectQuery.executeQuery("select id, event, site, round, white, black, date, result  from parties "+ condition);
+            ResultSet rs = selectQuery.executeQuery("select parties.id, event, site, round, white, black, date, result  from parties "+ condition);
             while (rs.next()){
                 parties.add(new Party(rs.getInt(1),rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5),rs.getString(6), rs.getString(7), rs.getString(8)));
             }
@@ -102,7 +103,7 @@ public class DBHandler{
         }           
     }
 
-    public Party getFullPartyInfo(int id) {
+    public Party getFullParty(int id) {
         try {
             Party party = null; 
             Statement selectQuery = connection.createStatement();
@@ -121,6 +122,12 @@ public class DBHandler{
                 System.out.println(e.toString());
                 return null;
         }  
+    }
+
+    public List<Party> getPartiesInfo(long[] blob) {
+        return getPartiesInfo(", moves WHERE moves.party_id=parties.id and "
+                + "moves.view_blob1=" + blob[0] + " and moves.view_blob2=" + blob[1] +
+                " and moves.view_blob3=" + blob[2] + " and moves.view_blob4=" + blob[3]);
     }
 	
 }

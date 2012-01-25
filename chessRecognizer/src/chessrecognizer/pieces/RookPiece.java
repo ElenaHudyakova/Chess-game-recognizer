@@ -15,6 +15,9 @@ public class RookPiece extends Piece {
     public RookPiece(int file, int rank, int chessColor) {
         super(file, rank, chessColor);
     }
+    
+    public RookPiece(){     
+    }
        
         
     public int getSerializationCode(){
