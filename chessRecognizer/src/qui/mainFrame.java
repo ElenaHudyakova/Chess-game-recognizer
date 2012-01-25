@@ -563,13 +563,7 @@ public static void main(String args[]) {
         resultLabel.setText("Result: " + currentParty.getResult());
         whiteLabel.setText("White player: " + currentParty.getWhite());
         blackLabel.setText("Black player: " + currentParty.getBlack());
-    }
-    
-    private Party getPartyFromDB(int id){
-        Party party = dbHandler.getFullParty(id); 
-        return party;
-    }
-    
+    }   
     
     private void addCurrentPartyMovesToList() {
         DefaultListModel<Move> movesModel = new DefaultListModel<Move>();
@@ -588,7 +582,7 @@ public static void main(String args[]) {
         int index = partiesList.getMinSelectionIndex();
         if (index != -1){
             Party party = (Party)partiesList.getModel().getElementAt(index);
-            currentParty = getPartyFromDB(party.getId());
+            currentParty = dbHandler.getFullParty(party.getId());
             currentParty.generateViews();            
             setCurrentPartyInfo();            
             addCurrentPartyMovesToList();            

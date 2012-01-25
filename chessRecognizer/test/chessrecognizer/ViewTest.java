@@ -4,12 +4,12 @@
  */
 package chessrecognizer;
 
+import chessrecognizer.pieces.KingPiece;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import chessrecognizer.pieces.PawnPiece;
 import chessrecognizer.pieces.Piece;
-import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -47,8 +47,8 @@ public class ViewTest {
         System.out.println("testCreateViewOutOfFENOnInitialPosition");
         View instance = new View("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
         assertEquals(32, instance.getPieces().size());
-        assertEquals(null, instance.getPiece(5, 4));
-        assertEquals(PawnPiece.class, instance.getPiece(5,2).getClass());        
+        assertEquals(null, instance.getPiece(new ChessPosition(5, 4)));
+        assertEquals(PawnPiece.class, instance.getPiece(new ChessPosition(5,2)).getClass());        
     }
     
     @Test
@@ -56,8 +56,22 @@ public class ViewTest {
         System.out.println("testCreateViewOutOfFEN");
         View instance = new View("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR w");
         assertEquals(32, instance.getPieces().size());
-        assertEquals(PawnPiece.class, instance.getPiece(5, 4).getClass());
-        assertEquals(null, instance.getPiece(5,2));        
+        assertEquals(PawnPiece.class, instance.getPiece(new ChessPosition(5, 4)).getClass());
+        assertEquals(null, instance.getPiece(new ChessPosition(5,2)));        
+    }
+    
+    @Test
+    public void testGetKingForInitialView(){
+        System.out.println("testGetKingForInitialView");
+        View view = new View();
+        view.setInitialView();
+        Piece whiteKing = view.getKing(Piece.WHITE_PLAYER); 
+        Piece blackKing = view.getKing(Piece.BLACK_PLAYER);
+        
+        assertEquals(KingPiece.class, whiteKing.getClass());
+        assertEquals(KingPiece.class, blackKing.getClass());
+        assertEquals(new ChessPosition(5,1), whiteKing.getPosition());
+        assertEquals(new ChessPosition(5,8), blackKing.getPosition());               
     }
     
     @Test
@@ -75,7 +89,8 @@ public class ViewTest {
         List<Party> parties = dbHandler.getPartiesInfo(instance.serialize());
         dbHandler.disconnect(); 
         
-        assertEquals(true, parties.size()>=1);
-        
+        assertEquals(true, parties.size()>=1);        
     }
+    
+
 }

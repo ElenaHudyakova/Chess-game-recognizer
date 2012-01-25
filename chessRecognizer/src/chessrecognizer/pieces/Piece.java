@@ -16,51 +16,49 @@ import java.util.logging.Logger;
 public abstract class Piece implements Cloneable{
     
     public final static int WHITE_PLAYER=1, BLACK_PLAYER=0;
-    private final static String [] FILES = new String[]{"a", "b", "c", "d", "e", "f", "g", "h"}; 
     private static enum serializationCodes {bishop, king, };
     private static Class [] pieces = new Class[]{BishopPiece.class, KingPiece.class, 
                                                 KnightPiece.class, PawnPiece.class, 
                                                 QueenPiece.class, RookPiece.class};
     
-    protected int file;//от 1 до 8
+    protected ChessPosition position;
     protected int player;
-    protected int rank;//от 1 до 8
     public ChessPosition previousMovePosition;
     
-    public Piece(int file, int rank,  int color) {
-        this.rank = rank;
-        this.file = file;
+    public Piece(ChessPosition position,  int color) {
+        this.position = position;
         this.player = color;
         previousMovePosition = null;
     }
     
-    public Piece (){
-        
-    }
-    
-    public static String getFile(int file){
-        return FILES[file-1];
-    }
-    
-    public static int getFile(String file){
-        for (int i=1; i<=8; i++){
-            if (getFile(i).equals(file))
-                return i;
-        }
-        throw new RuntimeException("Invalid file coordinate");
-    }
-    
+    public Piece (){}
+       
     public void moveTo(Move move, View view) {           
-        if ((view.getPiece(move.fileTo, move.rankTo)!=null)&&(move.isCaptionMove))
-            view.getPieces().remove(view.getPiece(move.fileTo, move.rankTo));
-        file = move.fileTo;
-        rank = move.rankTo;
+        if ((view.getPiece(move.moveToPosition)!=null)&&(move.isCaptionMove)){
+            view.getPieces().remove(view.getPiece(move.moveToPosition));
+        } else
+        if ((this.getClass()==PawnPiece.class)&&(move.isCaptionMove)&&(view.getPiece(move.moveToPosition)==null))
+        {
+            int rankShift;
+            if (this.getPlayer()==Piece.WHITE_PLAYER)
+                rankShift = -1;
+            else
+                rankShift = 1;
+            view.getPieces().remove(view.getPiece(new ChessPosition(move.moveToPosition.getFile(), move.moveToPosition.getRank()+rankShift)));
+        }
+        position = move.moveToPosition;
+    }
+    
+    public ChessPosition getPosition (){
+        return position;
     }
     
     @Override
     public Object clone(){
         try {
-            return super.clone();
+            Piece copy = (Piece) super.clone();
+            copy.position = (ChessPosition)position.clone();            
+            return copy;
         } catch (CloneNotSupportedException ex) {
             Logger.getLogger(Piece.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -71,51 +69,39 @@ public abstract class Piece implements Cloneable{
         return player;
     }
 
-    public int getFile() {
-        return file;
-    }
-
-    public int getRank() {
-        return rank;
-    }
-
-    protected boolean canMoveTo(int fileMoveTo, int rankMoveTo, View view){           
-        if (view.getPiece(fileMoveTo, rankMoveTo)!=null)
-            if (view.getPiece(fileMoveTo, rankMoveTo).getPlayer()==this.getPlayer())
+    public boolean canMoveTo(ChessPosition positionMoveTo, View view, boolean isCaptionMove){           
+        if (view.getPiece(positionMoveTo)!=null)
+            if (view.getPiece(positionMoveTo).getPlayer()==this.getPlayer())
                 return false;
-        if (isThereObstacle(fileMoveTo, rankMoveTo, view))
+        if (isThereObstacle(positionMoveTo, view))
             return false; 
         return true;
     }
     
-    public abstract boolean isThereObstacle(int fileMoveTo, int rankMoveTo, View view);
+    public abstract boolean isThereObstacle(ChessPosition positionMoveTo, View view);
     public abstract String getImagePath();
     public abstract int getSerializationCode();
     
     public boolean satisfyTo(Move move, View view) {
-        if (move.fileFrom!=null)
-            if (move.fileFrom!=file)
+        if (move.moveFromPosition.getFile()!=0)
+            if (move.moveFromPosition.getFile()!=position.getFile())
                 return false;           
         
-        if (move.rankFrom!=null)
-            if (move.rankFrom!=rank)
+        if (move.moveFromPosition.getRank()!=0)
+            if (move.moveFromPosition.getRank()!=position.getRank())
                 return false;        
             
         return (this.getClass()==move.movingPiece)&&
                (this.getPlayer()==move.getPlayer()&&
-                this.canMoveTo(move.fileTo, move.rankTo, view));        
+                this.canMoveTo(move.moveToPosition, view, move.isCaptionMove));        
     }
 
-    public void setFile(int file) {
-        this.file = file;
+    public void setPosition(ChessPosition position) {
+        this.position = position;
     }
 
     public void setPlayer(int player) {
         this.player = player;
-    }
-
-    public void setRank(int rank) {
-        this.rank = rank;
     }
 
     public static Piece getPieceFromSerializationCode(int serializationCode){
@@ -139,27 +125,24 @@ public abstract class Piece implements Cloneable{
             return false;
         }
         final Piece other = (Piece) obj;
-        if (this.file != other.file) {
+        if (this.position != other.position && (this.position == null || !this.position.equals(other.position))) {
             return false;
         }
         if (this.player != other.player) {
             return false;
         }
-        if (this.rank != other.rank) {
+        if (this.previousMovePosition != other.previousMovePosition && (this.previousMovePosition == null || !this.previousMovePosition.equals(other.previousMovePosition))) {
             return false;
         }
         return true;
     }
 
-    
-    
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 53 * hash + this.file;
-        hash = 53 * hash + this.rank;
+        int hash = 7;
         return hash;
     }
+
 
 }
 

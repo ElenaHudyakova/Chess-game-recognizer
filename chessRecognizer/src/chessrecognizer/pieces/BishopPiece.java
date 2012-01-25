@@ -4,6 +4,7 @@
  */
 package chessrecognizer.pieces;
 
+import chessrecognizer.ChessPosition;
 import chessrecognizer.View;
 
 /**
@@ -11,8 +12,8 @@ import chessrecognizer.View;
  * @author Lenkas
  */
 public class BishopPiece extends Piece {
-    public BishopPiece(int file, int rank, int chessColor) {
-        super(file, rank, chessColor);
+    public BishopPiece(ChessPosition position, int chessColor) {
+        super(position, chessColor);
     }
     
     public BishopPiece(){     
@@ -22,24 +23,27 @@ public class BishopPiece extends Piece {
         return 0+this.player*8;
     }
     
-    public boolean isThereObstacle(int fileMoveTo, int rankMoveTo, View view){
+    @Override
+    public boolean isThereObstacle(ChessPosition positionMoveTo, View view){
         int fileDirection, rankDirection;
         
-        if (Math.abs(file-fileMoveTo)!=Math.abs(rank-rankMoveTo))
+        if (Math.abs(position.getFile()-positionMoveTo.getFile())!=
+                Math.abs(position.getRank()-positionMoveTo.getRank()))
             return true;
         
-        if (fileMoveTo>file)
+        if (positionMoveTo.getFile()>position.getFile())
             fileDirection = 1;
         else
             fileDirection = -1;
         
-        if (rankMoveTo>rank)
+        if (positionMoveTo.getRank()>position.getRank())
             rankDirection = 1;
         else
             rankDirection = -1;
         
-        for (int iterator=1; iterator<Math.abs(rankMoveTo-rank); iterator++)
-             if (view.getPiece(file+(fileDirection)*iterator, rank+(rankDirection)*iterator)!=null)
+        for (int iterator=1; iterator<Math.abs(position.getRank()-positionMoveTo.getRank()); iterator++)
+             if (view.getPiece(new ChessPosition(position.getFile()+(fileDirection)*iterator, 
+                     position.getRank()+(rankDirection)*iterator))!=null)
                 return true; 
         return false;           
     }
@@ -52,9 +56,10 @@ public class BishopPiece extends Piece {
     }
     
     @Override
-    public boolean canMoveTo(int fileMoveTo, int rankMoveTo, View view) {          
-        if (!super.canMoveTo(fileMoveTo, rankMoveTo, view))
+    public boolean canMoveTo(ChessPosition positionMoveTo, View view, boolean isCaptionMove) {          
+        if (!super.canMoveTo(positionMoveTo, view, isCaptionMove))
             return false;         
-        return (Math.abs(file-fileMoveTo)==Math.abs(rank-rankMoveTo));      
+        return (Math.abs(position.getFile()-positionMoveTo.getFile())==
+                Math.abs(position.getRank()-positionMoveTo.getRank()));      
     }  
 }

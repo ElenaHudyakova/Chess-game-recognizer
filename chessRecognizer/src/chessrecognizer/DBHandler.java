@@ -52,7 +52,7 @@ public class DBHandler{
     }
 
 
-    public boolean addParty(Party party){
+    public void addParty(Party party){
         try {
                 party.generateViews();
                 
@@ -71,6 +71,7 @@ public class DBHandler{
 
                 for (int i=0; i<party.getMoves().size(); i++){
                     Move move = party.getMoves().get(i);
+                    //long [] blobs = new long[]{0,0,0,0};
                     long [] blobs = party.getViews().get(i).serialize();
                     Statement insertMovesQuery = connection.createStatement();
                     insertMovesQuery.executeUpdate("insert into moves (party_id, move_number, move_content, "
@@ -78,13 +79,10 @@ public class DBHandler{
                                                     party.getId() + ", " + move.getMoveNumber() + ", '" +
                                                     move.getMoveContent() +  "', " + move.getPlayer() + ", " +  
                                                     blobs[0] + ", " + blobs[1] + ", " + blobs[2] + ", "+ blobs[3] + ");");
-                    insertMovesQuery.close();                            
+                    insertMovesQuery.close();  
                 }
-
-                return true;
         } catch (Exception e) {
                 System.out.println(e.toString());
-                return false;
         }
     }
 

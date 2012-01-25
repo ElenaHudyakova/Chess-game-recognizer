@@ -4,6 +4,7 @@
  */
 package chessrecognizer.pieces;
 
+import chessrecognizer.ChessPosition;
 import chessrecognizer.Move;
 import chessrecognizer.View;
 
@@ -12,8 +13,8 @@ import chessrecognizer.View;
  * @author Lenkas
  */
 public class RookPiece extends Piece {
-    public RookPiece(int file, int rank, int chessColor) {
-        super(file, rank, chessColor);
+    public RookPiece(ChessPosition position, int chessColor) {
+        super(position, chessColor);
     }
     
     public RookPiece(){     
@@ -27,11 +28,11 @@ public class RookPiece extends Piece {
     @Override
     public void moveTo(Move move, View view) {           
         if (move.isKingCastling){
-            this.file = 6;            
+            this.position.setFile(6);            
             return;
         }
         if (move.isQueenCastling){
-            this.file = 4;
+            this.position.setFile(4);
             return;
         }
 
@@ -47,29 +48,29 @@ public class RookPiece extends Piece {
     }
     
     //NEED REFACTORING!!!
-    public boolean isThereObstacle(int fileMoveTo, int rankMoveTo, View view){
-        if (file==fileMoveTo){
-            if (rank<rankMoveTo){                
-                for (int rankIterator=rank+1; rankIterator<rankMoveTo-1; rankIterator++)
-                    if (view.getPiece(file, rankIterator)!=null)
+    public boolean isThereObstacle(ChessPosition positionMoveTo, View view){
+        if (position.getFile()==positionMoveTo.getFile()){
+            if (position.getRank()<positionMoveTo.getRank()){                
+                for (int rankIterator=position.getRank()+1; rankIterator<=positionMoveTo.getRank()-1; rankIterator++)
+                    if (view.getPiece(new ChessPosition(position.getFile(), rankIterator))!=null)
                         return true; 
                 return false;
             } else{                                    
-                for (int rankIterator=rank-1; rankIterator>rankMoveTo+1; rankIterator--)
-                    if (view.getPiece(file, rankIterator)!=null)
+                for (int rankIterator=position.getRank()-1; rankIterator>=positionMoveTo.getRank()+1; rankIterator--)
+                    if (view.getPiece(new ChessPosition(position.getFile(), rankIterator))!=null)
                         return true;                                            
                 return false;
             }                
         } 
-        if (rank==rankMoveTo){
-            if (file<fileMoveTo){
-                for (int fileIterator=file+1; fileIterator<fileMoveTo; fileIterator++)
-                    if (view.getPiece(fileIterator, rank)!=null)
+        if (position.getRank()==positionMoveTo.getRank()){
+            if (position.getFile()<positionMoveTo.getFile()){
+                for (int fileIterator=position.getFile()+1; fileIterator<positionMoveTo.getFile(); fileIterator++)
+                    if (view.getPiece(new ChessPosition(fileIterator, position.getRank()))!=null)
                         return true;   
                 return false;
             } else{
-                for (int fileIterator=file-1; fileIterator>fileMoveTo; fileIterator--)
-                    if (view.getPiece(fileIterator, rank)!=null)
+                for (int fileIterator=position.getFile()-1; fileIterator>positionMoveTo.getFile(); fileIterator--)
+                    if (view.getPiece(new ChessPosition(fileIterator, position.getRank()))!=null)
                         return true;   
                 return false;
             }             
@@ -78,9 +79,9 @@ public class RookPiece extends Piece {
     }
     
     @Override
-    public boolean canMoveTo(int fileMoveTo, int rankMoveTo, View view) {           
-        if (!super.canMoveTo(fileMoveTo, rankMoveTo, view))
+    public boolean canMoveTo(ChessPosition positionMoveTo, View view, boolean isCaptionMove) {           
+        if (!super.canMoveTo(positionMoveTo, view, isCaptionMove))
             return false;
-        return ((file==fileMoveTo)||(rank==rankMoveTo));      
+        return ((position.getFile()==positionMoveTo.getFile())||(position.getRank()==positionMoveTo.getRank()));      
     }  
 }

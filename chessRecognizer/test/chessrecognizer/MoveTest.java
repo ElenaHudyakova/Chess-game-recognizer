@@ -43,11 +43,9 @@ public class MoveTest {
     public void testParseSimplePawnMove() {
         System.out.println("testParseSimplePawnMove");
         Move testMove = new Move(-1, 1, "a4", Piece.WHITE_PLAYER);
-        testMove.parseMove();
-        assertEquals(null, testMove.fileFrom);
-        assertEquals(null, testMove.rankFrom);
-        assertEquals((Integer)1, testMove.fileTo);
-        assertEquals((Integer)4, testMove.rankTo);        
+        PGNHandler.parseMove(testMove);
+        assertEquals(new ChessPosition(0, 0), testMove.moveFromPosition);
+        assertEquals(new ChessPosition(1,4), testMove.moveToPosition);     
         assertEquals(PawnPiece.class, testMove.movingPiece);    
         assertEquals(false, testMove.isCheck);
         assertEquals(false, testMove.isCheckmate);        
@@ -57,11 +55,9 @@ public class MoveTest {
     public void testParseCaptionPawnMove() {
         System.out.println("testParseCaptionPawnMove");
         Move testMove = new Move(-1, 1, "bxa7", Piece.WHITE_PLAYER);
-        testMove.parseMove();
-        assertEquals((Integer)2, testMove.fileFrom);
-        assertEquals(null, testMove.rankFrom);
-        assertEquals((Integer)1, testMove.fileTo);
-        assertEquals((Integer)7, testMove.rankTo);        
+        PGNHandler.parseMove(testMove);
+        assertEquals(new ChessPosition(2, 0), testMove.moveFromPosition);
+        assertEquals(new ChessPosition(1,7), testMove.moveToPosition);         
         assertEquals(PawnPiece.class, testMove.movingPiece);      
     }
     
@@ -69,11 +65,9 @@ public class MoveTest {
     public void testParsePromotionMove() {
         System.out.println("testParsePromotionMove");
         Move testMove = new Move(-1, 1, "e8=Q", Piece.WHITE_PLAYER);
-        testMove.parseMove();
-        assertEquals(null, testMove.fileFrom);
-        assertEquals(null, testMove.rankFrom);
-        assertEquals((Integer)5, testMove.fileTo);
-        assertEquals((Integer)8, testMove.rankTo);        
+        PGNHandler.parseMove(testMove);
+        assertEquals(new ChessPosition(0, 0), testMove.moveFromPosition);
+        assertEquals(new ChessPosition(5,8), testMove.moveToPosition);      
         assertEquals(PawnPiece.class, testMove.movingPiece);      
         assertEquals(QueenPiece.class, testMove.promotionPiece); 
     }    
@@ -82,11 +76,9 @@ public class MoveTest {
     public void testParseKingMove() {
         System.out.println("testParseKingMove");
         Move testMove = new Move(-1, 1, "Ke8", Piece.WHITE_PLAYER);
-        testMove.parseMove();
-        assertEquals(null, testMove.fileFrom);
-        assertEquals(null, testMove.rankFrom);
-        assertEquals((Integer)5, testMove.fileTo);
-        assertEquals((Integer)8, testMove.rankTo);        
+        PGNHandler.parseMove(testMove);
+        assertEquals(new ChessPosition(0, 0), testMove.moveFromPosition);
+        assertEquals(new ChessPosition(5,8), testMove.moveToPosition);         
         assertEquals(KingPiece.class, testMove.movingPiece);      
         assertEquals(false, testMove.isCaptionMove); 
     }      
@@ -95,11 +87,9 @@ public class MoveTest {
     public void testParseBishopCaptionMove() {
         System.out.println("testParseBishopMove");
         Move testMove = new Move(-1, 1, "B1xa8", Piece.WHITE_PLAYER);
-        testMove.parseMove();
-        assertEquals(null, testMove.fileFrom);
-        assertEquals((Integer)1, testMove.rankFrom);
-        assertEquals((Integer)1, testMove.fileTo);
-        assertEquals((Integer)8, testMove.rankTo);        
+        PGNHandler.parseMove(testMove);
+        assertEquals(new ChessPosition(0, 1), testMove.moveFromPosition);
+        assertEquals(new ChessPosition(1,8), testMove.moveToPosition);                
         assertEquals(BishopPiece.class, testMove.movingPiece);      
         assertEquals(true, testMove.isCaptionMove); 
     }  
@@ -108,7 +98,7 @@ public class MoveTest {
     public void testParseCheckMove() {
         System.out.println("testParseCheckMove");
         Move testMove = new Move(-1, 1, "e6+", Piece.WHITE_PLAYER);
-        testMove.parseMove();
+        PGNHandler.parseMove(testMove);
   
         assertEquals(false, testMove.isCaptionMove); 
         assertEquals(true, testMove.isCheck); 
@@ -119,7 +109,7 @@ public class MoveTest {
     public void testParseCheckmateMove() {
         System.out.println("testParseCheckmateMove");
         Move testMove = new Move(-1, 1, "e6#", Piece.WHITE_PLAYER);
-        testMove.parseMove();
+        PGNHandler.parseMove(testMove);
   
         assertEquals(false, testMove.isCaptionMove); 
         assertEquals(false, testMove.isCheck); 
@@ -130,7 +120,7 @@ public class MoveTest {
     public void testParseKingCastling() {
         System.out.println("testParseKingCastling");
         Move testMove = new Move(-1, 1, "O-O", Piece.WHITE_PLAYER);
-        testMove.parseMove();
+        PGNHandler.parseMove(testMove);
   
         assertEquals(true, testMove.isKingCastling);   
         assertEquals(false, testMove.isQueenCastling);  
@@ -140,7 +130,7 @@ public class MoveTest {
     public void testParseQueenCastling() {
         System.out.println("testParseQueenCastling");
         Move testMove = new Move(-1, 1, "O-O-O", Piece.WHITE_PLAYER);
-        testMove.parseMove();
+        PGNHandler.parseMove(testMove);
   
         assertEquals(true, testMove.isQueenCastling); 
         assertEquals(false, testMove.isKingCastling); 

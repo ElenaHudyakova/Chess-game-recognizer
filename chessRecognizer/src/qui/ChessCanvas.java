@@ -5,6 +5,7 @@
 package qui;
 
 import chessrecognizer.ChessPosition;
+import chessrecognizer.PGNHandler;
 import chessrecognizer.View;
 import chessrecognizer.pieces.Piece;
 import java.awt.*;import java.awt.geom.Rectangle2D;
@@ -49,7 +50,7 @@ public class ChessCanvas extends java.awt.Canvas
           
           drawBoarderLetters(g2D, paintedPosition);          
           drawTile(g2D, paintedPosition);
-          drawMovingPiecePosition(g2D, view.getPiece(paintedPosition.getFile(), paintedPosition.getRank()));
+          drawMovingPiecePosition(g2D, view.getPiece(paintedPosition));
     }    
     markPreviousPosition(g2D);    
   }
@@ -66,8 +67,8 @@ public class ChessCanvas extends java.awt.Canvas
 
       if (piece!=null)
         try {
-            int xPos=width*(piece.getFile()-1);  
-            int yPos=height*(8-piece.getRank());
+            int xPos=width*(piece.getPosition().getFile()-1);  
+            int yPos=height*(8-piece.getPosition().getRank());
             img=ImageIO.read(new File(piece.getImagePath()));
             if (piece.previousMovePosition!=null){
                 g2D.setColor(Color.yellow);
@@ -100,7 +101,7 @@ public class ChessCanvas extends java.awt.Canvas
       if (paintedPosition.getFile()==1)
           g2D.drawString(Integer.toString(paintedPosition.getRank()), xPos, yPos+yShift);
       if (paintedPosition.getRank()==1)
-          g2D.drawString(Piece.getFile(paintedPosition.getFile()), xPos+bigXShift, yPos+bigYShift);          
+          g2D.drawString(PGNHandler.getFile(paintedPosition.getFile()), xPos+bigXShift, yPos+bigYShift);          
 
     }
 

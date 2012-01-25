@@ -4,6 +4,7 @@
  */
 package chessrecognizer.pieces;
 
+import chessrecognizer.ChessPosition;
 import chessrecognizer.View;
 
 /**
@@ -11,8 +12,8 @@ import chessrecognizer.View;
  * @author Lenkas
  */
 public class QueenPiece extends Piece {
-    public QueenPiece(int file, int rank, int chessColor) {
-        super(file, rank, chessColor);
+    public QueenPiece(ChessPosition position, int chessColor) {
+        super(position, chessColor);
     }
     
     public QueenPiece(){}  
@@ -22,10 +23,11 @@ public class QueenPiece extends Piece {
        return 4+this.player*8;
     }
     
-    public boolean isThereObstacle(int fileMoveTo, int rankMoveTo, View view){
-        Piece rook = new RookPiece(file, rank, player);
-        Piece bishop = new BishopPiece(file, rank, player);
-        return (rook.isThereObstacle(fileMoveTo, rankMoveTo, view)&&bishop.isThereObstacle(fileMoveTo, rankMoveTo, view));
+    public boolean isThereObstacle(ChessPosition positionMoveTo, View view){
+        Piece rook = new RookPiece(position, player);
+        Piece bishop = new BishopPiece(position, player);
+        return (rook.isThereObstacle(positionMoveTo, view) &&
+                bishop.isThereObstacle(positionMoveTo, view));
     }
     
     
@@ -37,11 +39,12 @@ public class QueenPiece extends Piece {
     }
     
     @Override
-    public boolean canMoveTo(int fileMoveTo, int rankMoveTo, View view) {           
-        if (!super.canMoveTo(fileMoveTo, rankMoveTo, view))
+    public boolean canMoveTo(ChessPosition positionMoveTo, View view, boolean isCaptionMove) {           
+        if (!super.canMoveTo(positionMoveTo, view, isCaptionMove))
             return false; 
-        Piece rook = new RookPiece(file, rank, player);
-        Piece bishop = new BishopPiece(file, rank, player);
-        return (rook.canMoveTo(fileMoveTo, rankMoveTo, view)||bishop.canMoveTo(fileMoveTo, rankMoveTo, view));      
+        Piece rook = new RookPiece(position, player);
+        Piece bishop = new BishopPiece(position, player);
+        return (rook.canMoveTo(positionMoveTo, view, isCaptionMove)||
+                bishop.canMoveTo(positionMoveTo, view, isCaptionMove));      
     }  
 }

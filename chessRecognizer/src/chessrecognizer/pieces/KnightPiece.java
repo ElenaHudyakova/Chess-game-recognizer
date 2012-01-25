@@ -4,6 +4,7 @@
  */
 package chessrecognizer.pieces;
 
+import chessrecognizer.ChessPosition;
 import chessrecognizer.View;
 
 /**
@@ -13,8 +14,8 @@ import chessrecognizer.View;
 
 public class KnightPiece extends Piece {
     
-    public KnightPiece(int file, int rank, int chessColor) {
-        super(file, rank, chessColor);
+    public KnightPiece(ChessPosition position, int chessColor) {
+        super(position, chessColor);
     }
        
     public KnightPiece(){}
@@ -36,12 +37,17 @@ public class KnightPiece extends Piece {
     }
     
     @Override
-    public boolean canMoveTo(int fileMoveTo, int rankMoveTo, View view) {
-        if (!super.canMoveTo(fileMoveTo, rankMoveTo, view))
+    public boolean canMoveTo(ChessPosition positionMoveTo, View view, boolean isCaptionMove) {
+        if (!super.canMoveTo(positionMoveTo, view, isCaptionMove))
             return false;
-        return ((((file==fileMoveTo+1)||(file==fileMoveTo-1))&&
-                        ((rank==rankMoveTo+2)||(rank==rankMoveTo-2)))||
-                (((file==fileMoveTo+2)||(file==fileMoveTo-2))&&
-                        ((rank==rankMoveTo+1)||(rank==rankMoveTo-1))));      
-    }  
+        return ((((position.getFile()==positionMoveTo.getFile()+1)||(position.getFile()==positionMoveTo.getFile()-1))&&
+                        ((position.getRank()==positionMoveTo.getRank()+2)||(position.getRank()==positionMoveTo.getRank()-2)))||
+                (((position.getFile()==positionMoveTo.getFile()+2)||(position.getFile()==positionMoveTo.getFile()-2))&&
+                        ((position.getRank()==positionMoveTo.getRank()+1)||(position.getRank()==positionMoveTo.getRank()-1))));      
+    }
+
+    @Override
+    public boolean isThereObstacle(ChessPosition positionMoveTo, View view) {
+        return false;
+    }
 }

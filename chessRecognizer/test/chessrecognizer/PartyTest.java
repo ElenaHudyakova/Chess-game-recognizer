@@ -67,13 +67,13 @@ public class PartyTest {
         Party party = PGNHandler.parseParties(fileName).get(0);
         party.generateViews();
         
-        Piece blackPawn = new PawnPiece(2, 7, Piece.BLACK_PLAYER);
-        blackPawn.previousMovePosition = new ChessPosition(2, 7);
+        Piece blackPawn = new PawnPiece(new ChessPosition(2, 7), Piece.BLACK_PLAYER);
+        blackPawn.previousMovePosition = null;
                 
         assertNotNull(party.getViews());
         assertEquals(3, party.getViews().size());
-        assertNull(party.getViews().get(2).getPiece(6,2));
-        assertEquals(blackPawn, party.getViews().get(1).getPiece(2,7));        
+        assertNull(party.getViews().get(2).getPiece(new ChessPosition(6,2)));
+        assertEquals(blackPawn, party.getViews().get(1).getPiece(new ChessPosition(2,7)));        
     }
     
     @Test
@@ -84,12 +84,12 @@ public class PartyTest {
         Party party = PGNHandler.parseParties(fileName).get(0);
         party.generateViews();
         
-        Piece whiteKnight = new KnightPiece(3, 4, Piece.WHITE_PLAYER);
+        Piece whiteKnight = new KnightPiece(new ChessPosition(3, 4), Piece.WHITE_PLAYER);
                 
         assertNotNull(party.getViews());
         assertEquals(5, party.getViews().size());
-        assertNull(party.getViews().get(4).getPiece(7,8));
-        assertEquals(whiteKnight, party.getViews().get(4).getPiece(3,4));      
+        assertNull(party.getViews().get(4).getPiece(new ChessPosition(7,8)));
+        assertEquals(whiteKnight, party.getViews().get(4).getPiece(new ChessPosition(3,4)));      
     }    
     
     @Test
@@ -100,13 +100,14 @@ public class PartyTest {
         Party party = PGNHandler.parseParties(fileName).get(0);
         party.generateViews();
         
-        Piece blackQueen = new QueenPiece(4, 5, Piece.BLACK_PLAYER);
-
+        Piece blackQueen = new QueenPiece(new ChessPosition(4, 5), Piece.BLACK_PLAYER);
+        blackQueen.previousMovePosition = new ChessPosition(4,8);
+        Piece resultBlackQueen = party.getViews().get(4).getPiece(new ChessPosition(4,5));
                 
         assertNotNull(party.getViews());
         assertEquals(5, party.getViews().size());
         assertEquals(32-2, party.getViews().get(4).getPieces().size());        
-        assertEquals(blackQueen, party.getViews().get(4).getPiece(4,5));      
+        assertEquals(blackQueen, resultBlackQueen);      
     }
     
     @Test
@@ -132,7 +133,7 @@ public class PartyTest {
                 
         assertNotNull(party.getViews());
         assertEquals(5, party.getViews().size());
-        assertNull(party.getViews().get(4).getPiece(3,8));  
+        assertNull(party.getViews().get(4).getPiece(new ChessPosition(3,8)));  
     }   
     
     @Test
@@ -145,7 +146,7 @@ public class PartyTest {
         
         assertNotNull(party.getViews());
         assertEquals(5, party.getViews().size());
-        assertNull(party.getViews().get(4).getPiece(4,1));  
+        assertNull(party.getViews().get(4).getPiece(new ChessPosition(4,1)));  
     }  
     
     @Test
@@ -156,13 +157,13 @@ public class PartyTest {
         Party party = PGNHandler.parseParties(fileName).get(0);
         party.generateViews();
         
-        Piece whiteRook = new RookPiece(1, 1, Piece.WHITE_PLAYER);
-        whiteRook.previousMovePosition = new ChessPosition(1, 1);
+        Piece whiteRook = new RookPiece(new ChessPosition(1, 1), Piece.WHITE_PLAYER);
+        whiteRook.previousMovePosition = null;
                 
         assertNotNull(party.getViews());
         assertEquals(5, party.getViews().size());
-        assertNull(party.getViews().get(4).getPiece(8,8));
-        assertEquals(whiteRook, party.getViews().get(2).getPiece(1,1));
+        assertNull(party.getViews().get(4).getPiece(new ChessPosition(8,8)));
+        assertEquals(whiteRook, party.getViews().get(2).getPiece(new ChessPosition(1,1)));
         
     }    
 
@@ -194,7 +195,7 @@ public class PartyTest {
                 
         assertNotNull(party.getViews());
         assertEquals(5, party.getViews().size());
-        assertNull(party.getViews().get(4).getPiece(5,1));        
+        assertNull(party.getViews().get(4).getPiece(new ChessPosition(5,1)));        
     }    
     
     @Test
@@ -207,7 +208,7 @@ public class PartyTest {
         
         assertNotNull(party.getViews());
         assertEquals(3, party.getViews().size());
-        assertNull(party.getViews().get(2).getPiece(2,1));        
+        assertNull(party.getViews().get(2).getPiece(new ChessPosition(2,1)));        
     }
     
     @Test

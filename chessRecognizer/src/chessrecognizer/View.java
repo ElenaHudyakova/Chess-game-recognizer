@@ -12,6 +12,8 @@ import chessrecognizer.pieces.RookPiece;
 import chessrecognizer.pieces.BishopPiece;
 import chessrecognizer.pieces.PawnPiece;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -30,16 +32,16 @@ public class View implements Cloneable {
         }
         
         for (int file=1; file<=8; file++)
-            pieces.add(new PawnPiece(file,rank2,player)); 
+            pieces.add(new PawnPiece(new ChessPosition(file,rank2),player)); 
         
-        pieces.add(new RookPiece(1, rank1, player));
-        pieces.add(new KnightPiece(2, rank1, player));
-        pieces.add(new BishopPiece(3, rank1, player));
-        pieces.add(new QueenPiece(4, rank1, player));
-        pieces.add(new KingPiece(5, rank1, player));
-        pieces.add(new BishopPiece(6, rank1, player));
-        pieces.add(new KnightPiece(7, rank1, player));
-        pieces.add(new RookPiece(8, rank1, player));
+        pieces.add(new RookPiece(new ChessPosition(1, rank1), player));
+        pieces.add(new KnightPiece(new ChessPosition(2, rank1), player));
+        pieces.add(new BishopPiece(new ChessPosition(3, rank1), player));
+        pieces.add(new QueenPiece(new ChessPosition(4, rank1), player));
+        pieces.add(new KingPiece(new ChessPosition(5, rank1), player));
+        pieces.add(new BishopPiece(new ChessPosition(6, rank1), player));
+        pieces.add(new KnightPiece(new ChessPosition(7, rank1), player));
+        pieces.add(new RookPiece(new ChessPosition(8, rank1), player));
         
     }
     
@@ -49,9 +51,10 @@ public class View implements Cloneable {
         long [] blobs = {0, 0, 0, 0};
         for (int file=1; file<=8; file++)
             for (int rank=1; rank<=8; rank++){
+                ChessPosition position = new ChessPosition(file, rank);
                 blobs[(file-1)/2] *= 16;
-                if (getPiece(file, rank)!=null)
-                    blobs[(file-1)/2]  += getPiece(file, rank).getSerializationCode();
+                if (getPiece(position)!=null)
+                    blobs[(file-1)/2]  += getPiece(position).getSerializationCode();
                 else
                     blobs[(file-1)/2]  += 14;
             }
@@ -72,10 +75,9 @@ public class View implements Cloneable {
                         file += fileShift;
                     } catch (Exception e){ 
                         file += 1;
-                        Class pieceClass = Move.parsePieceType(currentSimbol);
+                        Class pieceClass = PGNHandler.parsePieceType(currentSimbol);
                         Piece piece = (Piece)pieceClass.newInstance();
-                        piece.setFile(file);
-                        piece.setRank(rank);
+                        piece.setPosition(new ChessPosition(file, rank));
                         if (currentSimbol.equals(currentSimbol.toUpperCase())){
                             piece.setPlayer(Piece.WHITE_PLAYER);
                         } else
@@ -109,8 +111,8 @@ public class View implements Cloneable {
         addInitialOneSidePieces(Piece.BLACK_PLAYER);
     }
 
-    public void setMoveView(Move move, View previousView) {
-        move.parseMove();
+    public void setMoveView(Move move, View previousView) throws InstantiationException, IllegalAccessException {
+        PGNHandler.parseMove(move);
         pieces = new ArrayList<Piece>();          
                 
         if ((move.isKingCastling)||(move.isQueenCastling)){
@@ -122,23 +124,60 @@ public class View implements Cloneable {
         
         for (Piece piece:previousView.pieces){  
             if (piece.satisfyTo(move, previousView)){
-                movedPiece = (Piece)piece.clone();                
-                movedPiece.previousMovePosition = new ChessPosition(piece.getFile(), piece.getRank());                
+                View potentialView = (View)previousView.clone();
+                potentialView.pieces.remove(potentialView.getPiece(piece.getPosition()));
+                potentialView.addMovedPiece((Piece)piece.clone(), move);
+                if (!potentialView.isCheck(piece.getPlayer()))
+                    if (movedPiece == null){
+                        movedPiece = (Piece)piece.clone();                
+                        movedPiece.previousMovePosition = (ChessPosition) piece.getPosition().clone(); 
+                    } else{
+                        throw new RuntimeException("Ambiguous move " + move.toString());
+                    }  
+                else
+                    this.addNotMovedPiece(piece);
             } else{
-                Piece newPiece;
-                newPiece = (Piece)piece.clone();                                
-                newPiece.previousMovePosition = null;  
-                pieces.add(newPiece);                                      
+                this.addNotMovedPiece(piece);                                
             }                                
         }
 
-        addMovedPiece(movedPiece, move);                      
+        addMovedPiece(movedPiece, move);
+
     }
 
-    public Piece getPiece(int file, int rank){
-        for (Piece figure:pieces){
-            if ((figure.getFile()==file)&&(figure.getRank()==rank))
-                return figure;
+    @Override
+    protected Object clone() {
+        try {
+            View copy = (View) super.clone();
+            copy.pieces = (ArrayList<Piece>)this.pieces.clone();
+            return copy;
+        } catch (CloneNotSupportedException ex) {
+            Logger.getLogger(View.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    public Piece getKing(int player){
+        for (Piece piece:pieces){
+            if (piece.getPlayer()==player && piece.getClass()==KingPiece.class)
+                return piece;
+        }     
+        return null;
+    }
+    
+    public boolean isCheck(int player){
+        Piece king = getKing(player);
+        for (Piece piece:pieces){
+            if (player!=piece.getPlayer() && piece.canMoveTo(king.getPosition(), this, true))
+                return true;
+        }
+        return false;
+    }
+
+    public Piece getPiece(ChessPosition position){
+        for (Piece piece:pieces){
+            if (piece.getPosition().equals(position))
+                return piece;
         }
         return null;
     }
@@ -147,13 +186,17 @@ public class View implements Cloneable {
         return pieces;
     }    
 
-    private void addMovedPiece(Piece movedPiece, Move move) {
-        int fileMoveTo = move.fileTo;
-        int rankMoveTo = move.rankTo;
+    private void addMovedPiece(Piece movedPiece, Move move) throws InstantiationException, IllegalAccessException {
+        if (move.isPromotion){
+            Piece promotionedPiece = (Piece)move.promotionPiece.newInstance();
+            promotionedPiece.setPosition(movedPiece.getPosition());
+            promotionedPiece.setPlayer(movedPiece.getPlayer());
+            promotionedPiece.previousMovePosition = movedPiece.previousMovePosition;
+            movedPiece = promotionedPiece;
+        }
         
         if (movedPiece == null){
-            System.out.println(move.toString());
-            throw new RuntimeException("Invalid move");
+            throw new RuntimeException("Invalid move " + move.toString());
         }
         else{
             movedPiece.moveTo(move, this);
@@ -169,22 +212,29 @@ public class View implements Cloneable {
         Piece king, rook;
         int rank;
         
+        king = getKing(move.getPlayer());
+        
         if (move.getPlayer()==Piece.WHITE_PLAYER)
             rank = 1;
         else
             rank = 8;
         
-        king = this.getPiece(5, rank);
-        
         if (move.isKingCastling)
-            rook = this.getPiece(8, rank);  
+            rook = this.getPiece(new ChessPosition(8, rank));  
         else
             if (move.isQueenCastling)
-                rook = this.getPiece(1, rank);
+                rook = this.getPiece(new ChessPosition(1, rank));
             else
                 throw new RuntimeException("setCastling method calling for not castling move");
         
         king.moveTo(move, this);    
         rook.moveTo(move, this);
+    }
+
+    private void addNotMovedPiece(Piece piece) {
+        Piece newPiece;
+        newPiece = (Piece)piece.clone();                                
+        newPiece.previousMovePosition = null;  
+        pieces.add(newPiece);      
     }
 }

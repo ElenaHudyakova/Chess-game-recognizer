@@ -119,6 +119,22 @@ public class PGNHandlerTest {
         assertEquals("1/2-1/2", resultParties.get(0).getResult());
 
     }
+    
+    @Test 
+    public void testParseTagPairWithQuote(){
+        System.out.println("testParseTagPairWithQuote");
+        Party party = new Party();
+        PGNHandler.parseTagPair("[Event \"Match \" St. Petersburg-Paris\"\"]", party);
+        assertEquals("Match \" St. Petersburg-Paris\"", party.getEvent());
+    }
+    
+    @Test 
+    public void testParseTagPairWithQuote2(){
+        System.out.println("testParseTagPairWithQuote2");
+        Party party = new Party();
+        PGNHandler.parseTagPair("[Event \"It \"Circulo\"\"]", party);
+        assertEquals("It \"Circulo\"", party.getEvent());
+    }    
 
     @Test
     public void testParseTagPairsForTwoParties() throws FileNotFoundException {

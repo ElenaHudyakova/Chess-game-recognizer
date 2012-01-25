@@ -5,15 +5,7 @@
 package chessrecognizer;
 
 import java.util.ArrayList;
-//import java.util.Date;
-import java.sql.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-/**
- *
- * @author Lenkas
- */
 public class Party {   
     private int id = -1;
     private String event;
@@ -37,11 +29,6 @@ public class Party {
     public View getView(int viewSequenceNumber) {
         return views.get(viewSequenceNumber);
     }    
-    
-//    public String getStingDate(){
-//        return date.getYear()+"."+date.getMonth()+"."+date.getDay();
-//    }
-
     
     public void addMove(Move move){
         moves.add(move);
@@ -152,27 +139,19 @@ public class Party {
         return "ID " + id + ", " + event + ", раунд " + round + ", " + date;
     }
 
-//    public void setDate(String date) throws RuntimeException{
-//        Pattern datePattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
-//        Matcher matcher = datePattern.matcher(date);
-//        if (matcher.find())
-//            setDate(new Date(Integer.parseInt(matcher.group(1)), 
-//                             Integer.parseInt(matcher.group(3)), 
-//                             Integer.parseInt(matcher.group(2))));
-//        else
-//            date = null;
-//            //throw new RuntimeException("Invalid date");
-//    }
-//    
-    public void generateViews(){
+    public void generateViews() {
         View initialView = new View();
         initialView.setInitialView();
         views.add(initialView);
         
         for (Move move:moves){
-            View view = new View();            
-            view.setMoveView(move, views.get(views.size()-1));
-            views.add(view);
+            try{
+                View view = new View();            
+                view.setMoveView(move, views.get(views.size()-1));
+                views.add(view);
+            }catch (Exception e){
+                System.out.println(e.toString());
+            }                
         }
         
     }

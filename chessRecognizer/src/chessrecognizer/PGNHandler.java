@@ -4,7 +4,7 @@
  */
 package chessrecognizer;
 
-import chessrecognizer.pieces.Piece;
+import chessrecognizer.pieces.*;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -20,8 +20,176 @@ import java.util.regex.Pattern;
  */
 public class PGNHandler {
     
+    private final static String [] FILES = new String[]{"a", "b", "c", "d", "e", "f", "g", "h"}; 
+    
+    public static void parseMove(Move move){
+        if ("O-O".equals(move.getMoveContent())){
+            move.isKingCastling = true;
+            return;
+        }
+        if ("O-O-O".equals(move.getMoveContent())){
+            move.isQueenCastling = true;
+            return;
+        }                   
+        //parseMoveWithRegExp(move);
+        parseMoveNoRegExp(move);
+    }
+    
+    public static void parseMoveNoRegExp(Move move){
+        String content = move.getMoveContent();
+        
+        int i = content.length()-1;
+        
+        if (content.charAt(i)=='+'){
+            move.isCheck = true;
+            i--;
+        }
+        
+        if (content.charAt(i)=='#'){
+            move.isCheckmate = true;
+            i--;
+        }
+        
+        try{
+            move.promotionPiece = parsePieceType(Character.toString(content.charAt(i)));
+            move.isPromotion = true;
+            i--;
+        } catch (Exception ex) {}
+        
+        if (content.charAt(i)=='=')
+            i--;
+        
+        try {
+            move.moveToPosition.setRank(parseRank(Character.toString(content.charAt(i))));
+            i--;
+            move.moveToPosition.setFile(parseFile(Character.toString(content.charAt(i))));
+            if (i==0){
+                move.movingPiece = PawnPiece.class;
+                return;
+            }
+            else
+                i--;             
+        } catch (Exception ex){
+            System.out.println("Invalid move");
+        }
+
+        if (content.charAt(i)=='x'){
+            move.isCaptionMove = true;
+            if (i==0){
+                move.movingPiece = PawnPiece.class;
+                return;
+            }
+            else
+                i--;
+        }
+
+        try {
+            move.moveFromPosition.setRank(parseRank(Character.toString(content.charAt(i))));
+            if (i==0){
+                move.movingPiece = PawnPiece.class;
+                return;
+            }else
+                i--;             
+        } catch (Exception ex){}
+
+        try {
+            move.moveFromPosition.setFile(parseFile(Character.toString(content.charAt(i))));
+            if (i==0){
+                move.movingPiece = PawnPiece.class;
+                return;
+            }else
+                i--;                
+        } catch (Exception ex){}   
+            
+        try{
+            move.movingPiece = parsePieceType(Character.toString(content.charAt(i)));
+            if (i==0)
+                return;
+            else
+                i--;
+        } catch (Exception ex) {
+            move.movingPiece = PawnPiece.class;
+        }            
+               
+        if (i!=-1)
+            throw  new RuntimeException ("Invalid move");
+    }
+    
+    public static void parseMoveWithRegExp(Move move){
+
+        Pattern movePattern = Pattern.compile("([KRQNB]?)([a-h]?)([1-8]?)(x?)([a-h])([1-8])(=?)([KRQNB]?)([\\+#]?)");       
+                
+        Matcher matcher = movePattern.matcher(move.getMoveContent());
+        if (matcher.find()){
+            move.isCheck = ("+".equals(matcher.group(9)));
+            move.isCheckmate = ("#".equals(matcher.group(9)));
+            move.isCaptionMove = ("x".equals(matcher.group(4)));
+            if (!"".equals(matcher.group(8))){
+                move.isPromotion = true;
+                move.promotionPiece = parsePieceType(matcher.group(8));
+            }            
+            if (!"".equals(matcher.group(1))){
+                move.movingPiece = parsePieceType(matcher.group(1));
+            } else
+                move.movingPiece = PawnPiece.class;
+                        
+            if (!"".equals(matcher.group(2))){                
+                move.moveFromPosition.setFile(PGNHandler.parseFile(matcher.group(2)));
+            }
+            if (!"".equals(matcher.group(3))){
+                move.moveFromPosition.setRank(parseRank(matcher.group(3)));
+            }            
+            move.moveToPosition.setFile(PGNHandler.parseFile(matcher.group(5)));
+            move.moveToPosition.setRank(PGNHandler.parseRank(matcher.group(6)));
+        } else{
+            System.out.print(move);
+            throw new RuntimeException("Invalid move");
+        }       
+    }
+
+    public static Class parsePieceType(String type) {
+        type = type.toUpperCase();
+        if (type.equals("K"))
+            return KingPiece.class;
+        if (type.equals("R"))
+            return RookPiece.class;
+        if (type.equals("Q"))
+            return QueenPiece.class;
+        if (type.equals("N"))
+            return KnightPiece.class;
+        if (type.equals("B"))
+            return BishopPiece.class;
+        if (type.equals("P"))
+            return PawnPiece.class;        
+        throw new RuntimeException("Invalid move");
+    }
+    
+    public static int parseRank(String rank){
+        int intRank = Integer.parseInt(rank);
+        if ((intRank<=8)&&(intRank>=1))
+            return Integer.parseInt(rank);
+        else
+            throw new RuntimeException("Invalid move");
+    }
+    
+    public static String getFile(int file){
+        try{
+            return FILES[file-1];
+        } catch (Exception e){
+            throw new RuntimeException("Invalid file coordinate");
+        }
+    }
+    
+    public static int parseFile(String file){
+        for (int i=1; i<=8; i++){
+            if (getFile(i).equals(file))
+                return i;
+        }
+        throw new RuntimeException("Invalid file coordinate");
+    }
+    
     public static boolean parseTagPair(String line, Party party){
-        Pattern tagPairPattern = Pattern.compile("\\[(.+) \"(.+)\"\\]");
+        Pattern tagPairPattern = Pattern.compile("\\[(.+?) \"(.+)\"\\]");
         Matcher matcher = tagPairPattern.matcher(line);
         boolean matchFound = matcher.find();
         if (matchFound){
@@ -114,7 +282,7 @@ public class PGNHandler {
     }    
 
     private static boolean isNewParty(String line) {
-        Pattern tagPairPattern = Pattern.compile("\\[(.+) \"(.+)\"\\]");
+        Pattern tagPairPattern = Pattern.compile("\\[(.+?) \"(.+)\"\\]");
         Matcher matcher = tagPairPattern.matcher(line);
         if (matcher.find()&& matcher.group(1).toLowerCase().equals("event"))
             return true;
