@@ -3,7 +3,7 @@
 Almost ready! :)
 
 To do list:
-1. Party search by different party properties (site, event, date etc.)
-2. Export to PGN
-3. Deserialization of views
-4. Parsing FEN to view instance
+1. Party search by different party properties (site, event, date etc.) - it is so boring... 
+2. Export to PGN +
+3. Deserialization of views - next life?
+4. Parsing FEN to view instance +
